@@ -159,3 +159,23 @@
     font-size: 12px;
   }
 }
+
+
+/* Organization tab frame should hug the tabs, not expand into the empty header space. */
+.student-header .org-shell-tabs {
+  flex: 0 1 auto;
+  width: max-content;
+  max-width: calc(100% - 190px);
+  margin-left: auto;
+  justify-content: flex-end;
+  align-self: center;
+}
+@media (max-width: 900px) {
+  .student-header .org-shell-tabs {
+    flex: 0 1 auto;
+    width: fit-content;
+    max-width: 100%;
+    margin-left: 0;
+    align-self: flex-start;
+  }
+}
