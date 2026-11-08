@@ -27,6 +27,7 @@ export default function Company() {
     return () => window.clearTimeout(timeout)
   }, [notice])
   const [pendingAction, setPendingAction] = useState('')
+  useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }) }, [tab])
   const [query, setQuery] = useState('')
   const [eventTitle, setEventTitle] = useState('Практикум по алгоритмам и программированию')
   const [category, setCategory] = useState('project')
@@ -71,9 +72,8 @@ export default function Company() {
     finally { setPendingAction('') }
   }
   async function handleRequest(event) {
-    if (demoAccount) { setDemoNotice(true); return }
-
     event.preventDefault()
+    if (demoAccount) { setDemoNotice(true); return }
     if (!requestTitle.trim() || !requestText.trim() || pendingAction) return
     setPendingAction('request')
     try {
