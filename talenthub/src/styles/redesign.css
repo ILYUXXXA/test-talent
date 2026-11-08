@@ -917,3 +917,17 @@ input[type="checkbox"], input[type="radio"] { min-height: 18px; }
   .apply-card .spread { flex-direction: column; align-items: flex-start; }
   .apply-card .badge { max-width: 100%; }
 }
+
+
+/* Full-screen registration gate for demo organization accounts */
+.demo-gate { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; overflow-y: auto; padding: 24px; background: rgba(8,18,40,.82); backdrop-filter: blur(12px); }
+.demo-gate-card { width: min(540px,100%); padding: clamp(28px,5vw,48px); border: 1px solid #e2eaff; border-radius: 26px; background: #fff; box-shadow: 0 28px 90px rgba(0,0,0,.3); text-align: center; }
+.demo-gate-mark { display: grid; place-items: center; width: 58px; height: 58px; margin: 0 auto 22px; border-radius: 18px; color: #fff; background: linear-gradient(145deg,#6482ff,#3159e8); font-size: 29px; font-weight: 900; }
+.demo-gate-card h2 { margin: 13px 0; color: #172744; font-size: clamp(25px,4vw,34px); line-height: 1.15; letter-spacing: -.04em; }
+.demo-gate-card p { margin: 0 auto 24px; max-width: 420px; color: #71809a; font-size: 15px; line-height: 1.75; }
+.demo-gate-cta { display: inline-flex; min-height: 50px; align-items: center; justify-content: center; gap: 12px; padding: 0 22px; }
+.demo-gate-card > small { display: block; margin-top: 18px; color: #98a4b7; font-size: 12px; }
+.action-toast { position: fixed; z-index: 11000; top: 20px; left: 50%; display: flex; width: max-content; max-width: min(560px,calc(100vw - 32px)); align-items: center; gap: 11px; margin: 0; padding: 14px 19px; border: 1px solid #bce8d0; border-radius: 14px; color: #17633a; background: #f0fff6; box-shadow: 0 14px 40px rgba(20,70,45,.16); transform: translateX(-50%); animation: action-toast-in .22s ease-out; }
+.action-toast-check { display: grid; width: 25px; height: 25px; flex: 0 0 25px; place-items: center; border-radius: 50%; color: #fff; background: #20a45a; font-weight: 900; }
+@keyframes action-toast-in { from { opacity: 0; transform: translate(-50%,-10px); } to { opacity: 1; transform: translate(-50%,0); } }
+@media(max-width:560px) { .demo-gate { padding: 16px; } .demo-gate-card { border-radius: 20px; } .demo-gate-cta { width: 100%; } }
