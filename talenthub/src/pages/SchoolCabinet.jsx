@@ -63,6 +63,11 @@ export default function SchoolCabinet() {
   useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }) }, [tab])
   useEffect(() => {
     if (!notice) return
+    if (/демо|зарегистрируйте организацию|demo_restricted/i.test(String(notice))) {
+      setDemoNotice(true)
+      setRawNotice('')
+      return
+    }
     const timeout = window.setTimeout(() => setNotice(''), 4200)
     return () => window.clearTimeout(timeout)
   }, [notice])
@@ -166,7 +171,7 @@ export default function SchoolCabinet() {
       {demoNotice ? <div className="demo-action-overlay" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) setDemoNotice(false) }}><section className="demo-action-dialog" role="dialog" aria-modal="true" aria-labelledby="demo-action-title"><button className="demo-action-close" type="button" aria-label="Закрыть" onClick={() => setDemoNotice(false)}>×</button><div className="demo-action-icon"><span>✦</span></div><span className="demo-action-kicker">TALENTHUB · ДЕМО-АККАУНТ</span><h2 id="demo-action-title">Эта возможность пока недоступна</h2><p>Вы можете знакомиться с кабинетом, но для этого действия нужна зарегистрированная организация. Создайте аккаунт школы или компании, чтобы пользоваться всеми возможностями TalentHub.</p><a className="demo-action-register" href="/organization-registration?role=school">Зарегистрировать организацию <span>→</span></a><button className="demo-action-back" type="button" onClick={() => setDemoNotice(false)}>Вернуться в демо-кабинет</button></section></div> : null}
 
 
-    {notice ? <div className="notice org-notice action-toast" role="status"><span className="action-toast-check">✓</span>{notice}</div> : null}
+    {notice && !/демо|зарегистрируйте организацию|demo_restricted/i.test(String(notice)) ? <div className="notice org-notice action-toast" role="status"><span className="action-toast-check">✓</span>{notice}</div> : null}
 
     {tab === 'overview' ? <>
       <div className="org-metrics"><Metric value={students.length} label="Учеников в профиле" note="Учащиеся лицея"/><Metric value={events.length} label="Всего мероприятий" note={`${activeEvents} опубликовано`}/><Metric value={pendingEvents} label="На модерации" note="Ожидают проверки"/><Metric value={dashboard()?.counters.incoming_requests ?? incoming.length} label="Новых запросов" note="От компаний и академий"/><Metric value={publishedRegistrations} label="Регистраций" note="По вашим мероприятиям"/></div>
