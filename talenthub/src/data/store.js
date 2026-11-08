@@ -25,12 +25,7 @@ export const currentUser = () => state.user
 const DEMO_ORG_TOKENS = new Set(['th_demo_school_1f85ed08247f646e3309082eee04b85f885a4db17382d06fc82ebf95dee030f','th_demo_company_71a1140475560d032a232e3fb660700021e5d7106ad006026366d71e6e2adcd3'])
 const DEMO_ORG_KEY = 'talenthub_demo_organization'
 export const isDemoOrganization = () => {
-  if (globalThis.sessionStorage?.getItem(DEMO_ORG_KEY) === '1' || DEMO_ORG_TOKENS.has(getToken())) return true
-  const role = state.user?.role || state.rawUser?.role
-  if (!['school', 'company'].includes(role)) return false
-  const email = String(state.rawUser?.email || state.user?.email || '').toLowerCase()
-  const organizationName = String(state.user?.orgName || state.rawUser?.organization?.name || state.rawUser?.organization_name || '').toLowerCase()
-  return email.endsWith('@demo.by') || email.endsWith('@talenthub.demo') || organizationName.includes('демо') || organizationName.includes('demo')
+  return DEMO_ORG_TOKENS.has(getToken()) || globalThis.sessionStorage?.getItem(DEMO_ORG_KEY) === '1'
 }
 export const listSchools = () => state.organizations.filter(o => o.kind === 'school').map(o => o.name)
 export const listEvents = () => state.events
