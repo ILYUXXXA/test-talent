@@ -125,7 +125,7 @@ a:hover { color: var(--primary-hover); }
 
 /* Page frame, surfaces and typography */
 main:not(.th-landing) { min-height: calc(100vh - 80px); padding: 38px 0 76px; }
-.container { width: min(1240px, calc(100% - 2 * var(--page-gutter))); margin: 0 auto; padding-inline: 0; }
+.container { width: min(1440px, calc(100% - 2 * var(--page-gutter))); margin-inline: auto; padding-inline: 0; }
 main:not(.th-landing) h1, .org-page h1 {
   margin: 0 0 12px;
   color: #172744;
@@ -902,4 +902,18 @@ input[type="checkbox"], input[type="radio"] { min-height: 18px; }
   .parent-greeting h1 { font-size: clamp(25px, 6.8vw, 30px); }
   .parent-child-switcher { grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); }
   .detail-panel .row > .btn { flex: 1 1 100%; }
+}
+
+
+/* Keep the application cards centered and prevent their heading/status row from drifting. */
+.apply-grid { width: 100%; min-width: 0; }
+.apply-card { min-width: 0; }
+.apply-card .spread { align-items: flex-start; gap: 10px 18px; }
+.apply-card .card-title { flex: 1 1 0; min-width: 0; }
+.apply-card .badge { flex: 0 0 auto; }
+@media (max-width: 760px) {
+  .container { width: calc(100% - 2 * var(--page-gutter)); }
+  .apply-card { align-items: flex-start; }
+  .apply-card .spread { flex-direction: column; align-items: flex-start; }
+  .apply-card .badge { max-width: 100%; }
 }
