@@ -1,4 +1,4 @@
-import { currentUser as apiUser, listMarketplace, dashboard, schoolInfo } from '../data/store.js'
+import { currentUser as apiUser, listMarketplace, dashboard, schoolInfo, isDemoOrganization } from '../data/store.js'
 import { useStoreRevision } from '../data/hooks.js'
 import { useMemo, useState } from 'react'
 import OrganizationShell from '../components/OrganizationShell.jsx'
@@ -35,6 +35,7 @@ function SectionTitle({ eyebrow, title, children }) {
 export default function SchoolCabinet() {
   const apiRevision = useStoreRevision()
   const SCHOOL = apiUser()?.orgName || ''
+  const demoAccount = isDemoOrganization()
   const [version, setVersion] = useState(0)
   const [tab, setTab] = useState('overview')
   const [expandedEvent, setExpandedEvent] = useState('')
@@ -68,6 +69,7 @@ export default function SchoolCabinet() {
 
   async function handlePublish(event) {
     event.preventDefault()
+    if (demoAccount) { setNotice('В демо-аккаунте нельзя создавать мероприятия. Зарегистрируйте организацию, чтобы создавать публикации и полноценно работать в TalentHub.'); return }
     if (!eventTitle.trim() || !description.trim() || !eventDate || !deadline || Number(seats) < 1) return
     try {
       await publishEvent({ title: eventTitle.trim(), category, interests: [interest], grade, city, date: eventDate, deadline, format, seats: Number(seats), description: description.trim(), organizer: SCHOOL, place: city, terms: 'Регистрация через TalentHub.' })
@@ -119,6 +121,7 @@ export default function SchoolCabinet() {
   return <OrganizationShell tabs={[['overview','Обзор','overview'],['events','Мои мероприятия','events'],['prestige','Престиж','prestige'],['partners','Сотрудничество','partners'],['market','Предложения компаний','market'],['create','Опубликовать мероприятие','create']]} activeTab={tab} onTabChange={(id) => { setTab(id); setNotice('') }}>
     <main className="org-page"><div className="container org-container">
       <section className="org-page-heading"><h1>Кабинет образовательного учреждения</h1><p>Управляйте мероприятиями, отслеживайте активность учащихся и взаимодействуйте с компаниями-партнёрами.</p></section>
+      {demoAccount ? <div className="notice org-notice" role="status"><strong>Демо-режим</strong><p>В демо-аккаунте нельзя создавать и публиковать мероприятия. Зарегистрируйте организацию, чтобы создавать свои мероприятия и полноценно работать в TalentHub.</p><a className="btn btn-primary btn-small" href="/organization-registration?role=school">Зарегистрировать организацию</a></div> : null}
 
 
     {notice ? <div className="notice org-notice" role="status">{notice}</div> : null}
