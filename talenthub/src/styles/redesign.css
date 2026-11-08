@@ -936,3 +936,19 @@ input[type="checkbox"], input[type="radio"] { min-height: 18px; }
 /* Compact, correctly centered transient success notification */
 .action-toast { min-height: 54px; padding: 12px 18px; font-size: 15px; line-height: 1.4; }
 .action-toast-check { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; flex: 0 0 26px; padding: 0; font-family: Arial,sans-serif; font-size: 19px; font-weight: 700; line-height: 1; text-align: center; }
+
+
+/* Demo-only feature restriction dialog */
+.demo-action-overlay { position: fixed; inset: 0; z-index: 15000; display: grid; place-items: center; padding: 22px; background: rgba(13,27,50,.56); backdrop-filter: blur(9px); animation: demo-overlay-in .18s ease-out; }
+.demo-action-dialog { position: relative; width: min(470px,100%); padding: 38px 34px 30px; border: 1px solid rgba(255,255,255,.9); border-radius: 26px; background: linear-gradient(155deg,#fff 0%,#f7f9ff 100%); box-shadow: 0 28px 90px rgba(12,31,68,.28); text-align: center; animation: demo-dialog-in .22s ease-out; }
+.demo-action-close { position: absolute; top: 14px; right: 16px; width: 36px; height: 36px; border: 0; border-radius: 50%; color: #75839a; background: #edf1f8; font-size: 25px; line-height: 1; cursor: pointer; }
+.demo-action-icon { display: grid; width: 62px; height: 62px; margin: 0 auto 20px; place-items: center; border-radius: 20px; color: #fff; background: linear-gradient(145deg,#4778ff,#2451d8); box-shadow: 0 10px 24px rgba(49,91,220,.24); font-size: 29px; }
+.demo-action-kicker { color: #5474ca; font-size: 10px; font-weight: 800; letter-spacing: .14em; }
+.demo-action-dialog h2 { margin: 12px 0 10px; color: #172744; font-size: clamp(23px,4vw,29px); line-height: 1.16; letter-spacing: -.035em; }
+.demo-action-dialog p { margin: 0 auto 23px; max-width: 390px; color: #697991; font-size: 14px; line-height: 1.7; }
+.demo-action-register { display: flex; min-height: 52px; align-items: center; justify-content: center; gap: 12px; padding: 0 18px; border-radius: 14px; color: #fff; background: linear-gradient(100deg,#2860ef,#477bff); box-shadow: 0 8px 20px rgba(48,94,229,.2); font-size: 14px; font-weight: 750; text-decoration: none; transition: transform .18s,box-shadow .18s; }
+.demo-action-register:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(48,94,229,.28); }
+.demo-action-back { margin-top: 13px; padding: 9px 12px; border: 0; color: #7a879b; background: transparent; font-size: 13px; cursor: pointer; }
+@keyframes demo-overlay-in { from { opacity: 0 } to { opacity: 1 } }
+@keyframes demo-dialog-in { from { opacity: 0; transform: translateY(8px) scale(.985) } to { opacity: 1; transform: translateY(0) scale(1) } }
+@media(max-width:520px) { .demo-action-dialog { padding: 34px 22px 24px; border-radius: 22px; } }
