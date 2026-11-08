@@ -871,3 +871,40 @@ html:has(.kt) { scroll-behavior: smooth; scroll-padding-top: 0; }
   .kt .kt-chapter-copy h2, .kt .kt-contacts-content h2 { font-size: 26px; }
   .kt .kt-contact-card { gap: 12px; padding: 16px; }
 }
+
+
+/* Mobile first screen: fill the usable viewport below the compact header.
+   Let the opening grow naturally on short screens instead of clipping its content. */
+@media (max-width: 700px) {
+  .kt {
+    width: 100%;
+    min-width: 0;
+    overflow-x: clip;
+  }
+  .kt-opening {
+    min-height: calc(100dvh - var(--landing-header-height));
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    padding-top: 0;
+  }
+  .kt-opening > .kt-hero {
+    min-height: 0;
+    align-content: space-between;
+  }
+  .kt-opening .kt-ticker {
+    width: 100%;
+    max-width: 100%;
+  }
+  .kt .kt-hero-bottom,
+  .kt .kt-hero-bottom > div {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .kt .kt-hero-bottom p {
+    overflow-wrap: anywhere;
+  }
+  .kt .kt-hero-actions .kt-cta {
+    min-width: 0;
+  }
+}
