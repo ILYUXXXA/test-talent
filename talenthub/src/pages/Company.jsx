@@ -19,8 +19,12 @@ export default function Company() {
   const [version, setVersion] = useState(0)
   const [tab, setTab] = useState('overview')
   const [expandedEvent, setExpandedEvent] = useState('')
-  const [notice, setNotice] = useState('')
+  const [notice, setNoticeState] = useState('')
   function showDemoRestriction() { window.dispatchEvent(new CustomEvent('talenthub:demo-restriction', { detail: { role: 'company' } })) }
+  function setNotice(message) {
+    if (demoAccount && message) { showDemoRestriction(); return }
+    setNoticeState(message)
+  }
   useEffect(() => {
     if (!notice) return
     const timeout = window.setTimeout(() => setNotice(''), 4200)
