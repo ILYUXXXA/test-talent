@@ -1,5 +1,6 @@
 import { ApiBoundary, RequireRole, CatalogGuard } from './components/ApiBoundary.jsx'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import AppHeader from './components/AppHeader.jsx'
 import StudentShell from './components/StudentShell.jsx'
 import Landing from './pages/Landing.jsx'
@@ -17,13 +18,24 @@ import Admin from './pages/Admin.jsx'
 import ParentLink from './pages/ParentLink.jsx'
 import Company from './pages/Company.jsx'
 
+function ActionToastHost() {
+  const [message, setMessage] = useState('')
+  useEffect(() => {
+    const show = event => { setMessage(event.detail?.message || 'Действие успешно выполнено') }
+    window.addEventListener('talenthub:action-success', show)
+    return () => window.removeEventListener('talenthub:action-success', show)
+  }, [])
+  useEffect(() => { if (!message) return; const id = window.setTimeout(() => setMessage(''), 3600); return () => window.clearTimeout(id) }, [message])
+  return message ? <div className="global-action-toast" role="status"><span>✓</span>{message}</div> : null
+}
+
 function WithHeader({ children }) {
   return <AppHeader>{children}</AppHeader>
 }
 
 export default function App() {
   return (
-    <ApiBoundary><BrowserRouter>
+    <ApiBoundary><BrowserRouter><ActionToastHost />
       <Routes>
         <Route path="/events" element={<CatalogGuard><StudentShell><Events /></StudentShell></CatalogGuard>} />
         <Route path="/applications" element={<RequireRole role="student"><StudentShell><Applications /></StudentShell></RequireRole>} />
