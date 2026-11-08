@@ -39,7 +39,15 @@ export default function SchoolCabinet() {
   const [version, setVersion] = useState(0)
   const [tab, setTab] = useState('overview')
   const [expandedEvent, setExpandedEvent] = useState('')
-  const [notice, setNotice] = useState('')
+  const [notice, setRawNotice] = useState('')
+  function setNotice(message) {
+    if (typeof message === 'string' && (message.includes('demo_restricted') || message.includes('недоступно в демо-аккаунте'))) {
+      setDemoNotice(true)
+      setRawNotice('')
+      return
+    }
+    setRawNotice(message)
+  }
   const [demoNotice, setDemoNotice] = useState(false)
   const [pendingAction, setPendingAction] = useState('')
   useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }) }, [tab])
