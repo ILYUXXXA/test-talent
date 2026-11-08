@@ -164,7 +164,12 @@ async function mutate(key, callback) {
   const ownEpoch = epoch
   const promise = (async () => {
     const result = await callback()
-    if (epoch === ownEpoch) await refresh()
+    if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('talenthub:action-success', { detail: { message: 'Действие успешно выполнено' } }))
+    if (epoch === ownEpoch) {
+      try { await refresh() } catch (error) {
+        if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('talenthub:action-success', { detail: { message: 'Действие выполнено. Обновите страницу, если данные ещё не появились.' } }))
+      }
+    }
     return result
   })().finally(() => pendingMutations.delete(key))
   pendingMutations.set(key, promise)
