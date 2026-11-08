@@ -932,5 +932,3 @@ input[type="checkbox"], input[type="radio"] { min-height: 18px; }
 @keyframes action-toast-in { from { opacity: 0; transform: translate(-50%,-10px); } to { opacity: 1; transform: translate(-50%,0); } }
 @media(max-width:560px) { .demo-gate { padding: 16px; } .demo-gate-card { border-radius: 20px; } .demo-gate-cta { width: 100%; } }
 
-.global-action-toast { position: fixed; z-index: 12000; top: 18px; left: 50%; display: flex; width: max-content; max-width: min(560px,calc(100vw - 32px)); align-items: center; gap: 11px; padding: 14px 19px; border: 1px solid #bce8d0; border-radius: 14px; color: #17633a; background: #f0fff6; box-shadow: 0 14px 40px rgba(20,70,45,.16); font-size: 14px; font-weight: 700; transform: translateX(-50%); animation: action-toast-in .22s ease-out; }
-.global-action-toast > span { display: grid; width: 25px; height: 25px; flex: 0 0 25px; place-items: center; border-radius: 50%; color: #fff; background: #20a45a; font-weight: 900; }
