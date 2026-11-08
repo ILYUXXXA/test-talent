@@ -908,3 +908,77 @@ html:has(.kt) { scroll-behavior: smooth; scroll-padding-top: 0; }
     min-width: 0;
   }
 }
+
+
+/* Mobile landing opening: reserve the fixed header inside the first viewport.
+   The hero and ticker fill the remaining height; the next chapter starts below it. */
+@media (max-width: 700px) {
+  .kt-opening {
+    box-sizing: border-box;
+    min-height: 100svh;
+    min-height: 100dvh;
+    padding-top: var(--landing-header-height);
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+  .kt-opening > .kt-hero {
+    box-sizing: border-box;
+    min-height: 0;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    align-content: stretch;
+    gap: clamp(14px, 2.5svh, 22px);
+    padding-top: clamp(18px, 3svh, 26px);
+    padding-bottom: 0;
+  }
+  .kt-opening .kt-hero-copy h1 {
+    grid-row: 2;
+    align-self: end;
+    margin: 0;
+  }
+  .kt-opening .kt-hero-bottom {
+    grid-row: 3;
+    align-self: start;
+    padding: 0;
+  }
+  .kt-opening .kt-hero-footer {
+    grid-row: 4;
+    align-self: end;
+    min-height: 54px;
+    height: auto;
+    padding-block: 10px;
+  }
+  .kt-opening .kt-ticker {
+    align-self: end;
+    overflow: hidden;
+    padding-block: clamp(12px, 2svh, 18px);
+  }
+  .kt-opening .kt-ticker span {
+    font-size: clamp(18px, 5vw, 25px);
+    gap: 22px;
+    padding-right: 22px;
+  }
+}
+@media (max-width: 420px) {
+  .kt-opening > .kt-hero {
+    gap: 14px;
+    padding-top: 16px;
+  }
+  .kt-opening .kt-hero-top {
+    font-size: 10px;
+  }
+  .kt-opening .kt-hero-copy h1 {
+    font-size: clamp(26px, 8.2vw, 36px);
+    line-height: 1.16;
+  }
+  .kt-opening .kt-hero-bottom p {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .kt-opening .kt-hero-actions {
+    margin-top: 16px;
+  }
+  .kt-opening .kt-hero-footer > span:last-child {
+    display: none;
+  }
+}
