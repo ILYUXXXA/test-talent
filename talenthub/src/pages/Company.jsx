@@ -20,7 +20,7 @@ export default function Company() {
   const [tab, setTab] = useState('overview')
   const [expandedEvent, setExpandedEvent] = useState('')
   const [notice, setNoticeState] = useState('')
-  function showDemoRestriction() { if (demoAccount) window.dispatchEvent(new CustomEvent('talenthub:demo-restriction', { detail: { role: 'company' } })) }
+  function showDemoRestriction() { window.dispatchEvent(new CustomEvent('talenthub:demo-restriction', { detail: { role: 'company' } })) }
   function setNotice(message) {
     if (demoAccount && typeof message === 'string' && /демо|зарегистрируйте организацию|demo_restricted/i.test(message)) { showDemoRestriction(); return }
     setNoticeState(message)
@@ -72,7 +72,7 @@ export default function Company() {
       setVersion((value) => value + 1)
       setNotice('Успешно создано! Мероприятие отправлено на модерацию. Оно отображается во вкладке «Мои мероприятия» со статусом «На модерации».')
       setTab('events')
-    } catch (error) { if (demoAccount && error.code === 'demo_restricted') showDemoRestriction(); else setNotice(error.message || 'Не удалось сохранить инициативу. Попробуйте ещё раз.') }
+    } catch (error) { if (error.code === 'demo_restricted') showDemoRestriction(); else setNotice(error.message || 'Не удалось сохранить инициативу. Попробуйте ещё раз.') }
     finally { setPendingAction('') }
   }
   async function handleRequest(event) {
@@ -94,7 +94,7 @@ export default function Company() {
       setVersion((value) => value + 1)
       setNotice(isPublic ? 'Запрос отправлен на модерацию. После допуска его увидят все школы.' : `Предложение отправлено: ${school}.`)
       setTab('partners')
-    } catch (error) { if (demoAccount && error.code === 'demo_restricted') showDemoRestriction(); else setNotice(error.message || 'Не удалось отправить предложение. Попробуйте ещё раз.') }
+    } catch (error) { if (error.code === 'demo_restricted') showDemoRestriction(); else setNotice(error.message || 'Не удалось отправить предложение. Попробуйте ещё раз.') }
     finally { setPendingAction('') }
   }
   async function handleRespond(id, decision) {
