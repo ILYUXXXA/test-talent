@@ -41,7 +41,7 @@ export const parentCabinet = () => ({ ready: state.ready, error: state.error, lo
   user: state.user, children: state.children, activeId: state.activeId,
   suggestions: state.suggestions, events: state.events, schools: state.schools })
 function clearSession() {
-  epoch += 1; refreshPromise = null; setToken(null)
+  epoch += 1; refreshPromise = null; globalThis.sessionStorage?.removeItem(DEMO_ORG_KEY); setToken(null)
   state = { ...empty(), ready: true, organizations: state.organizations, reference: state.reference,
     catalog: state.catalog.map(e => ({ ...e, my_registration: null })), events: state.catalog.map(e => ({ ...e, my_registration: null })), upcoming: state.upcoming }
   emit()
