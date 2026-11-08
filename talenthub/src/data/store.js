@@ -22,6 +22,10 @@ export const subscribe = listener => { listeners.add(listener); return () => lis
 export const getRevision = () => revision
 export const getState = () => state
 export const currentUser = () => state.user
+export const isDemoOrganization = () => [
+  'th_demo_school_1f85ed08247f646e3309082eee04b85f885a4db17382d06fc82ebf95dee030f0',
+  'th_demo_company_71a1140475560d032a232e3fb660700021e5d7106ad006026366d71e6e2adcd3',
+].includes(getToken())
 export const listSchools = () => state.organizations.filter(o => o.kind === 'school').map(o => o.name)
 export const listEvents = () => state.events
 export const listUpcoming = () => state.upcoming
