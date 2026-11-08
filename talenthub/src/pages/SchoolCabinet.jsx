@@ -46,7 +46,7 @@ export default function SchoolCabinet() {
     setDemoDialogOpen(true)
   }
   function setNotice(message) {
-    if (demoAccount && typeof message === 'string' && /демо|зарегистрируйте организацию|demo_restricted/i.test(message)) {
+    if (typeof message === 'string' && /демо|зарегистрируйте организацию|demo_restricted/i.test(message)) {
       showDemoRestriction()
       return
     }
@@ -55,7 +55,7 @@ export default function SchoolCabinet() {
   function handleSchoolActionError(error, fallback) {
     const message = String(error?.message || '')
     const isDemoRestriction = error?.code === 'demo_restricted'
-      || (/демо|demo|зарегистрируйте организацию/i.test(message) && (error?.status === 403 || error?.statusCode === 403 || !error?.status))
+      || /демо|demo|зарегистрируйте организацию/i.test(message)
     if (isDemoRestriction) {
       showDemoRestriction()
       return
