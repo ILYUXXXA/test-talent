@@ -41,7 +41,6 @@ export default function SchoolCabinet() {
   const [expandedEvent, setExpandedEvent] = useState('')
   const [notice, setRawNotice] = useState('')
   function showDemoRestriction() {
-    if (!demoAccount) return
     setRawNotice('')
     window.dispatchEvent(new CustomEvent('talenthub:demo-restriction', { detail: { role: 'school' } }))
   }
@@ -53,7 +52,7 @@ export default function SchoolCabinet() {
     setRawNotice(message)
   }
   function handleSchoolActionError(error, fallback) {
-    if (demoAccount && (error?.code === 'demo_restricted' || error?.status === 403)) {
+    if (error?.code === 'demo_restricted') {
       showDemoRestriction()
       return
     }
