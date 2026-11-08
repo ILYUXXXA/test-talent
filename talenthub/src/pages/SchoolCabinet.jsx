@@ -42,6 +42,7 @@ export default function SchoolCabinet() {
   const [notice, setNotice] = useState('')
   const [demoNotice, setDemoNotice] = useState(false)
   const [pendingAction, setPendingAction] = useState('')
+  useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }) }, [tab])
   useEffect(() => {
     if (!notice) return
     const timeout = window.setTimeout(() => setNotice(''), 4200)
@@ -98,9 +99,8 @@ export default function SchoolCabinet() {
     setNotice(decision === 'accepted' ? 'Запрос принят. Можно переходить к согласованию деталей.' : 'Запрос отклонён.')
   }
   async function handleRequest(event) {
-    if (demoAccount) { setDemoNotice(true); return }
-
     event.preventDefault()
+    if (demoAccount) { setDemoNotice(true); return }
     if (!requestTitle.trim() || !requestText.trim() || pendingAction) return
     setPendingAction('request')
     try {
