@@ -152,7 +152,7 @@ export default function Landing() {
     };
   }, []);
   return <>
-    <main id="top" className="kt th-landing" ref={root}>
+    <main id="top" className="kt th-landing" ref={root} onClickCapture={event => { if (menu && !event.target.closest('#landing-navigation, .kt-menu')) setMenu(false); }}>
       <header className="kt-header" data-theme={headerTheme}>
         <a href="#top" className="kt-logo" aria-label="TalentHub — вернуться в начало страницы" onClick={event => { event.preventDefault(); window.history.replaceState(null, "", window.location.pathname + window.location.search); window.scrollTo({ top: 0, behavior: "smooth" }); }}><span className="kt-logo-mark">t.</span><span>Talent<span>Hub</span></span></a>
         <nav id="landing-navigation" className={menu ? "kt-nav is-open" : "kt-nav"} aria-label="Основная навигация">
