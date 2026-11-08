@@ -932,3 +932,7 @@ input[type="checkbox"], input[type="radio"] { min-height: 18px; }
 @keyframes action-toast-in { from { opacity: 0; transform: translate(-50%,-10px); } to { opacity: 1; transform: translate(-50%,0); } }
 @media(max-width:560px) { .demo-gate { padding: 16px; } .demo-gate-card { border-radius: 20px; } .demo-gate-cta { width: 100%; } }
 
+
+/* Compact, correctly centered transient success notification */
+.action-toast { min-height: 54px; padding: 12px 18px; font-size: 15px; line-height: 1.4; }
+.action-toast-check { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; flex: 0 0 26px; padding: 0; font-family: Arial,sans-serif; font-size: 19px; font-weight: 700; line-height: 1; text-align: center; }
