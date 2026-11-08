@@ -45,6 +45,10 @@ export default function SchoolCabinet() {
     window.dispatchEvent(new CustomEvent('talenthub:demo-restriction', { detail: { role: 'school' } }))
   }
   function setNotice(message) {
+    if (demoAccount && message) {
+      showDemoRestriction()
+      return
+    }
     if (typeof message === 'string' && /демо|зарегистрируйте организацию|demo_restricted/i.test(message)) {
       showDemoRestriction()
       return
