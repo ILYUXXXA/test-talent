@@ -52,11 +52,14 @@ export default function SchoolCabinet() {
     setRawNotice(message)
   }
   function handleSchoolActionError(error, fallback) {
-    if (error?.code === 'demo_restricted') {
+    const message = String(error?.message || '')
+    const isDemoRestriction = error?.code === 'demo_restricted'
+      || (/демо|demo|зарегистрируйте организацию/i.test(message) && (error?.status === 403 || error?.statusCode === 403 || !error?.status))
+    if (isDemoRestriction) {
       showDemoRestriction()
       return
     }
-    setNotice(error?.message || fallback || 'Не удалось выполнить действие. Попробуйте ещё раз.')
+    setNotice(message || fallback || 'Не удалось выполнить действие. Попробуйте ещё раз.')
   }
   const [pendingAction, setPendingAction] = useState('')
   useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }) }, [tab])
