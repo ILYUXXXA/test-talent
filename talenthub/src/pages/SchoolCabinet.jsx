@@ -35,7 +35,6 @@ function SectionTitle({ eyebrow, title, children }) {
 export default function SchoolCabinet() {
   const apiRevision = useStoreRevision()
   const SCHOOL = apiUser()?.orgName || ''
-  const demoAccount = isDemoOrganization()
   const [version, setVersion] = useState(0)
   const [tab, setTab] = useState('overview')
   const [expandedEvent, setExpandedEvent] = useState('')
@@ -101,7 +100,7 @@ export default function SchoolCabinet() {
 
   async function handlePublish(event) {
     event.preventDefault()
-    if (demoAccount) { showDemoRestriction(); return }
+    if (isDemoOrganization()) { showDemoRestriction(); return }
     if (!eventTitle.trim() || !description.trim() || !eventDate || !deadline || Number(seats) < 1 || pendingAction) return
     setPendingAction('publish')
     try {
@@ -113,7 +112,7 @@ export default function SchoolCabinet() {
     finally { setPendingAction('') }
   }
   async function handleRespond(id, decision) {
-    if (demoAccount) { showDemoRestriction(); return }
+    if (isDemoOrganization()) { showDemoRestriction(); return }
 
     if (pendingAction) return
     setPendingAction('respond')
@@ -124,7 +123,7 @@ export default function SchoolCabinet() {
   }
   async function handleRequest(event) {
     event.preventDefault()
-    if (demoAccount) { showDemoRestriction(); return }
+    if (isDemoOrganization()) { showDemoRestriction(); return }
     if (!requestTitle.trim() || !requestText.trim() || pendingAction) return
     setPendingAction('request')
     try {
@@ -140,7 +139,7 @@ export default function SchoolCabinet() {
   }
 
   async function handleMarketplaceRespond(item) {
-    if (demoAccount) { showDemoRestriction(); return }
+    if (isDemoOrganization()) { showDemoRestriction(); return }
 
     if (pendingAction) return
     setPendingAction('market')
