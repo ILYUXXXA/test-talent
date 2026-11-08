@@ -20,7 +20,7 @@ export default function Company() {
   const [tab, setTab] = useState('overview')
   const [expandedEvent, setExpandedEvent] = useState('')
   const [notice, setNotice] = useState('')
-  const [demoNotice, setDemoNotice] = useState(false)
+  function showDemoRestriction() { window.dispatchEvent(new CustomEvent('talenthub:demo-restriction', { detail: { role: 'company' } })) }
   useEffect(() => {
     if (!notice) return
     const timeout = window.setTimeout(() => setNotice(''), 4200)
@@ -60,7 +60,7 @@ export default function Company() {
 
   async function handlePublish(event) {
     event.preventDefault()
-    if (demoAccount) { setDemoNotice(true); return }
+    if (demoAccount) { showDemoRestriction(); return }
     if (!eventTitle.trim() || !description.trim() || !date || !deadline || Number(seats) < 1 || pendingAction) return
     setPendingAction('publish')
     try {
@@ -68,12 +68,12 @@ export default function Company() {
       setVersion((value) => value + 1)
       setNotice('Успешно создано! Мероприятие отправлено на модерацию. Оно отображается во вкладке «Мои мероприятия» со статусом «На модерации».')
       setTab('events')
-    } catch (error) { if (error.code !== 'demo_restricted') setNotice(error.message || 'Не удалось сохранить инициативу. Попробуйте ещё раз.') }
+    } catch (error) { if (error.code === 'demo_restricted') showDemoRestriction(); else setNotice(error.message || 'Не удалось сохранить инициативу. Попробуйте ещё раз.') }
     finally { setPendingAction('') }
   }
   async function handleRequest(event) {
     event.preventDefault()
-    if (demoAccount) { setDemoNotice(true); return }
+    if (demoAccount) { showDemoRestriction(); return }
     if (!requestTitle.trim() || !requestText.trim() || pendingAction) return
     setPendingAction('request')
     try {
@@ -90,11 +90,11 @@ export default function Company() {
       setVersion((value) => value + 1)
       setNotice(isPublic ? 'Запрос отправлен на модерацию. После допуска его увидят все школы.' : `Предложение отправлено: ${school}.`)
       setTab('partners')
-    } catch (error) { if (error.code !== 'demo_restricted') setNotice(error.message || 'Не удалось отправить предложение. Попробуйте ещё раз.') }
+    } catch (error) { if (error.code === 'demo_restricted') showDemoRestriction(); else setNotice(error.message || 'Не удалось отправить предложение. Попробуйте ещё раз.') }
     finally { setPendingAction('') }
   }
   async function handleRespond(id, decision) {
-    if (demoAccount) { setDemoNotice(true); return }
+    if (demoAccount) { showDemoRestriction(); return }
 
     if (pendingAction) return
     setPendingAction(`respond-${id}`)
@@ -102,12 +102,12 @@ export default function Company() {
       await respondPartnership(id, decision)
       setVersion((value) => value + 1)
       setNotice(decision === 'accepted' ? 'Запрос принят. Можно согласовать детали инициативы.' : 'Запрос отклонён.')
-    } catch (error) { if (error.code !== 'demo_restricted') setNotice(error.message || 'Не удалось обновить запрос.') }
+    } catch (error) { if (error.code === 'demo_restricted') showDemoRestriction(); else setNotice(error.message || 'Не удалось обновить запрос.') }
     finally { setPendingAction('') }
   }
 
   async function handleMarketplaceRespond(item) {
-    if (demoAccount) { setDemoNotice(true); return }
+    if (demoAccount) { showDemoRestriction(); return }
 
     const alreadyResponded = partnerships.some((entry) => entry.parentRequestId === item.id && entry.from === org)
     if (alreadyResponded) {
@@ -120,16 +120,13 @@ export default function Company() {
       await sendPartnership({ from: org, to: item.from, title: item.title, text: `${org} заинтересована в сотрудничестве по запросу «${item.title}». Свяжитесь с нами, чтобы обсудить детали.`, description: `Отклик на публичный запрос «${item.title}». ${item.description || ''}`.trim(), status: 'incoming', parentRequestId: item.id })
       setVersion((value) => value + 1)
       setNotice(`Отклик отправлен организации «${item.from}».`)
-    } catch (error) { if (error.code !== 'demo_restricted') setNotice(error.message || 'Не удалось отправить отклик. Попробуйте ещё раз.') }
+    } catch (error) { if (error.code === 'demo_restricted') showDemoRestriction(); else setNotice(error.message || 'Не удалось отправить отклик. Попробуйте ещё раз.') }
     finally { setPendingAction('') }
   }
 
   return <OrganizationShell tabs={[['overview','Обзор','overview'],['events','Мои мероприятия','events'],['partners','Сотрудничество','partners'],['market','Запросы школ','market'],['schools','Учреждения','schools'],['create','Опубликовать мероприятие','create']]} activeTab={tab} onTabChange={(id) => { setTab(id); setNotice('') }}>
     <main className="org-page"><div className="container org-container">
       <section className="org-page-heading"><h1>Кабинет компании</h1><p>Управляйте образовательными инициативами, партнёрствами и предложениями для учреждений образования.</p></section>
-      {demoNotice ? <div className="demo-action-overlay" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) setDemoNotice(false) }}><section className="demo-action-dialog" role="dialog" aria-modal="true" aria-labelledby="demo-action-title"><button className="demo-action-close" type="button" aria-label="Закрыть" onClick={() => setDemoNotice(false)}>×</button><div className="demo-action-icon"><span>✦</span></div><span className="demo-action-kicker">TALENTHUB · ДЕМО-АККАУНТ</span><h2 id="demo-action-title">Эта возможность пока недоступна</h2><p>Вы можете знакомиться с кабинетом, но для этого действия нужна зарегистрированная организация. Создайте аккаунт школы или компании, чтобы пользоваться всеми возможностями TalentHub.</p><a className="demo-action-register" href="/organization-registration?role=company">Зарегистрировать организацию <span>→</span></a><button className="demo-action-back" type="button" onClick={() => setDemoNotice(false)}>Вернуться в демо-кабинет</button></section></div> : null}
-
-
     {notice ? <div className="notice org-notice action-toast" role="status"><span className="action-toast-check">✓</span>{notice}</div> : null}
 
     {tab === 'overview' ? <>
