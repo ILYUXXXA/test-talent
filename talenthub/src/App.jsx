@@ -1,5 +1,5 @@
 import { ApiBoundary, RequireRole, CatalogGuard } from './components/ApiBoundary.jsx'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import AppHeader from './components/AppHeader.jsx'
 import StudentShell from './components/StudentShell.jsx'
@@ -19,6 +19,17 @@ import ParentLink from './pages/ParentLink.jsx'
 import Company from './pages/Company.jsx'
 
 
+function ScrollToTop() {
+  const { pathname, search, hash } = useLocation()
+  useEffect(() => {
+    if (hash) return
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+  }, [pathname, search, hash])
+  return null
+}
+
 function WithHeader({ children }) {
   return <AppHeader>{children}</AppHeader>
 }
@@ -26,6 +37,7 @@ function WithHeader({ children }) {
 export default function App() {
   return (
     <ApiBoundary><BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/events" element={<CatalogGuard><StudentShell><Events /></StudentShell></CatalogGuard>} />
         <Route path="/applications" element={<RequireRole role="student"><StudentShell><Applications /></StudentShell></RequireRole>} />
