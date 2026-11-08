@@ -154,7 +154,7 @@ export default function Landing() {
   return <>
     <main id="top" className="kt th-landing" ref={root}>
       <header className="kt-header" data-theme={headerTheme}>
-        <Link to="/" className="kt-logo" aria-label="TalentHub — главная"><span className="kt-logo-mark">t.</span><span>Talent<span>Hub</span></span></Link>
+        <a href="#top" className="kt-logo" aria-label="TalentHub — вернуться в начало страницы" onClick={event => { event.preventDefault(); window.history.replaceState(null, "", window.location.pathname + window.location.search); window.scrollTo({ top: 0, behavior: "smooth" }); }}><span className="kt-logo-mark">t.</span><span>Talent<span>Hub</span></span></a>
         <nav id="landing-navigation" className={menu ? "kt-nav is-open" : "kt-nav"} aria-label="Основная навигация">
           {navigation.map(([href, label]) => <Button asChild variant="ghost" key={href}><a href={href} aria-current={activeSection === href.slice(1) ? "location" : undefined} onClick={() => setMenu(false)}>{label}</a></Button>)}
         </nav>
