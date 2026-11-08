@@ -59,7 +59,7 @@ export default function Company() {
     try {
       await publishEvent({ title: eventTitle.trim(), category, interests: [interest], grade, date, deadline, format, city, place: city, seats: Number(seats), description: description.trim(), organizer: org, terms: 'Регистрация через TalentHub.' })
       setVersion((value) => value + 1)
-      setNotice('Мероприятие отправлено на проверку и появится в каталоге после модерации.')
+      setNotice('Успешно создано! Мероприятие отправлено на модерацию. Оно отображается во вкладке «Мои мероприятия» со статусом «На модерации».')
       setTab('events')
     } catch (error) { setNotice(error.message || 'Не удалось сохранить инициативу. Попробуйте ещё раз.') }
     finally { setPendingAction('') }
@@ -115,10 +115,10 @@ export default function Company() {
   return <OrganizationShell tabs={[['overview','Обзор','overview'],['events','Мои мероприятия','events'],['partners','Сотрудничество','partners'],['market','Запросы школ','market'],['schools','Учреждения','schools'],['create','Опубликовать мероприятие','create']]} activeTab={tab} onTabChange={(id) => { setTab(id); setNotice('') }}>
     <main className="org-page"><div className="container org-container">
       <section className="org-page-heading"><h1>Кабинет компании</h1><p>Управляйте образовательными инициативами, партнёрствами и предложениями для учреждений образования.</p></section>
-      {demoAccount ? <div className="notice org-notice" role="status"><strong>Демо-режим</strong><p>В демо-аккаунте нельзя создавать и публиковать мероприятия. Зарегистрируйте организацию, чтобы создавать свои мероприятия и полноценно работать в TalentHub.</p><a className="btn btn-primary btn-small" href="/organization-registration?role=company">Зарегистрировать организацию</a></div> : null}
+      {demoAccount ? <div className="demo-gate" role="dialog" aria-modal="true" aria-labelledby="demo-gate-title"><div className="demo-gate-card"><div className="demo-gate-mark">t.</div><span className="org-eyebrow">TALENTHUB · ДОСТУП К ВОЗМОЖНОСТЯМ</span><h2 id="demo-gate-title">Пора перейти на полноценный аккаунт</h2><p>Вы сейчас используете демонстрационный кабинет. Чтобы создавать мероприятия, отправлять запросы и пользоваться всеми возможностями TalentHub, зарегистрируйте свою организацию.</p><a className="btn btn-primary demo-gate-cta" href="/organization-registration?role=company">Зарегистрировать организацию <span aria-hidden="true">→</span></a><small>Демо-режим предназначен только для знакомства с платформой.</small></div></div> : null}
 
 
-    {notice ? <div className="notice org-notice" role="status">{notice}</div> : null}
+    {notice ? <div className="notice org-notice action-toast" role="status"><span className="action-toast-check">✓</span>{notice}</div> : null}
 
     {tab === 'overview' ? <>
       <div className="org-metrics"><Metric value={events.length} label="Всего мероприятий" note={`${published} опубликовано`}/><Metric value={dashboard()?.counters.incoming_requests ?? incoming.length} label="Новых предложений" note="Запросы от учреждений"/><Metric value={dashboard()?.counters.total_requests ?? partnerships.length} label="Партнёрских запросов" note="Входящие и исходящие"/><Metric value={dashboard()?.counters.agreed_initiatives ?? accepted.length} label="Согласованных партнёрств" note="История сотрудничества"/><Metric value={registrationsCount} label="Регистраций" note="На ваши мероприятия"/></div>
