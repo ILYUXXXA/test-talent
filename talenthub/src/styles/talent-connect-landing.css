@@ -1124,3 +1124,32 @@ html:has(.kt) { scroll-behavior: smooth; scroll-padding-top: 0; }
     line-height: 1.14;
   }
 }
+
+
+/* Balance the mobile opening vertically without a large empty spacer row. */
+@media (max-width: 700px) {
+  .kt .kt-opening > .kt-hero {
+    grid-template-rows: auto auto auto auto;
+    align-content: space-evenly;
+    gap: 0;
+  }
+  .kt .kt-opening .kt-hero-copy h1,
+  .kt .kt-opening .kt-hero-bottom,
+  .kt .kt-opening .kt-hero-footer {
+    align-self: center;
+  }
+  .kt .kt-opening .kt-hero-copy h1 {
+    margin: 0;
+  }
+  .kt .kt-opening .kt-hero-bottom {
+    padding: 0;
+  }
+  .kt .kt-opening .kt-hero-footer {
+    width: 100%;
+  }
+}
+@media (max-width: 420px) {
+  .kt .kt-opening > .kt-hero {
+    align-content: space-evenly;
+  }
+}
