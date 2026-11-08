@@ -41,8 +41,8 @@ export default function SchoolCabinet() {
   const [expandedEvent, setExpandedEvent] = useState('')
   const [notice, setRawNotice] = useState('')
   function showDemoRestriction() {
-    setDemoNotice(true)
     setRawNotice('')
+    window.dispatchEvent(new CustomEvent('talenthub:demo-restriction', { detail: { role: 'school' } }))
   }
   function setNotice(message) {
     if (typeof message === 'string' && /демо|зарегистрируйте организацию|demo_restricted/i.test(message)) {
@@ -58,14 +58,12 @@ export default function SchoolCabinet() {
     }
     setNotice(error?.message || fallback || 'Не удалось выполнить действие. Попробуйте ещё раз.')
   }
-  const [demoNotice, setDemoNotice] = useState(false)
   const [pendingAction, setPendingAction] = useState('')
   useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }) }, [tab])
   useEffect(() => {
     if (!notice) return
     if (/демо|зарегистрируйте организацию|demo_restricted/i.test(String(notice))) {
-      setDemoNotice(true)
-      setRawNotice('')
+      showDemoRestriction()
       return
     }
     const timeout = window.setTimeout(() => setNotice(''), 4200)
@@ -168,7 +166,6 @@ export default function SchoolCabinet() {
   return <OrganizationShell tabs={[['overview','Обзор','overview'],['events','Мои мероприятия','events'],['prestige','Престиж','prestige'],['partners','Сотрудничество','partners'],['market','Предложения компаний','market'],['create','Опубликовать мероприятие','create']]} activeTab={tab} onTabChange={(id) => { setTab(id); setNotice('') }}>
     <main className="org-page"><div className="container org-container">
       <section className="org-page-heading"><h1>Кабинет образовательного учреждения</h1><p>Управляйте мероприятиями, отслеживайте активность учащихся и взаимодействуйте с компаниями-партнёрами.</p></section>
-      {demoNotice ? <div className="demo-action-overlay" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) setDemoNotice(false) }}><section className="demo-action-dialog" role="dialog" aria-modal="true" aria-labelledby="demo-action-title"><button className="demo-action-close" type="button" aria-label="Закрыть" onClick={() => setDemoNotice(false)}>×</button><div className="demo-action-icon"><span>✦</span></div><span className="demo-action-kicker">TALENTHUB · ДЕМО-АККАУНТ</span><h2 id="demo-action-title">Эта возможность пока недоступна</h2><p>Вы можете знакомиться с кабинетом, но для этого действия нужна зарегистрированная организация. Создайте аккаунт школы или компании, чтобы пользоваться всеми возможностями TalentHub.</p><a className="demo-action-register" href="/organization-registration?role=school">Зарегистрировать организацию <span>→</span></a><button className="demo-action-back" type="button" onClick={() => setDemoNotice(false)}>Вернуться в демо-кабинет</button></section></div> : null}
 
 
     {notice && !/демо|зарегистрируйте организацию|demo_restricted/i.test(String(notice)) ? <div className="notice org-notice action-toast" role="status"><span className="action-toast-check">✓</span>{notice}</div> : null}
