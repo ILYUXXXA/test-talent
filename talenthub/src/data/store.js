@@ -22,10 +22,9 @@ export const subscribe = listener => { listeners.add(listener); return () => lis
 export const getRevision = () => revision
 export const getState = () => state
 export const currentUser = () => state.user
-export const isDemoOrganization = () => [
-  'th_demo_school_1f85ed08247f646e3309082eee04b85f885a4db17382d06fc82ebf95dee030f0',
-  'th_demo_company_71a1140475560d032a232e3fb660700021e5d7106ad006026366d71e6e2adcd3',
-].includes(getToken())
+const DEMO_ORG_TOKENS = new Set(['th_demo_school_1f85ed08247f646e3309082eee04b85f885a4db17382d06fc82ebf95dee030f','th_demo_company_71a1140475560d032a232e3fb660700021e5d7106ad006026366d71e6e2adcd3'])
+const DEMO_ORG_KEY = 'talenthub_demo_organization'
+export const isDemoOrganization = () => globalThis.sessionStorage?.getItem(DEMO_ORG_KEY) === '1' || DEMO_ORG_TOKENS.has(getToken())
 export const listSchools = () => state.organizations.filter(o => o.kind === 'school').map(o => o.name)
 export const listEvents = () => state.events
 export const listUpcoming = () => state.upcoming
@@ -48,7 +47,7 @@ function clearSession() {
   emit()
 }
 onUnauthorized(clearSession)
-export const logout = () => clearSession()
+export const logout = () => { globalThis.sessionStorage?.removeItem(DEMO_ORG_KEY); clearSession() }
 
 async function publicData() {
   const [reference, organizations, catalog, upcoming] = await Promise.all([
@@ -149,7 +148,12 @@ async function authenticateOnce(path, body) {
   return state.user
 }
 export const login = (email, password, expectedRole) => authenticate('/auth/login', { email, password, ...(expectedRole ? { expected_role: expectedRole } : {}) })
-export const loginOrganization = (token, expectedRole) => authenticate('/auth/organization-login', { token, expected_role: expectedRole })
+export const loginOrganization = async (token, expectedRole) => {
+  const result = await authenticate('/auth/organization-login', { token, expected_role: expectedRole })
+  if (DEMO_ORG_TOKENS.has(token)) globalThis.sessionStorage?.setItem(DEMO_ORG_KEY, '1')
+  else globalThis.sessionStorage?.removeItem(DEMO_ORG_KEY)
+  return result
+}
 export const registerStudent = data => authenticate('/auth/register', { role: data.role || 'student',
   first_name: data.firstName, last_name: data.lastName, email: data.email, password: data.password,
   ...(data.role === 'parent' ? {} : { birth_date: data.birthDate, school_id: organizationId(data.school, 'school') }) })
@@ -160,6 +164,10 @@ function organizationId(value, kind) {
   return matches[0].id
 }
 async function mutate(key, callback) {
+  if (['school', 'company'].includes(state.user?.role) && isDemoOrganization()) {
+    if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('talenthub:demo-restriction', { detail: { role: state.user.role } }))
+    throw new ApiError('Это действие недоступно в демо-аккаунте. Зарегистрируйте организацию.', 403, 'demo_restricted')
+  }
   if (pendingMutations.has(key)) return pendingMutations.get(key)
   const ownEpoch = epoch
   const promise = (async () => {
