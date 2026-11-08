@@ -167,7 +167,7 @@ export default function SchoolCabinet() {
     finally { setPendingAction('') }
   }
 
-  return <>{    {demoDialogOpen ? <div className="demo-action-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setDemoDialogOpen(false) }}>
+  return <>{demoDialogOpen ? <div className="demo-action-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setDemoDialogOpen(false) }}>
       <section className="demo-action-dialog" role="dialog" aria-modal="true" aria-labelledby="school-demo-action-title">
         <button className="demo-action-close" type="button" aria-label="Закрыть" onClick={() => setDemoDialogOpen(false)}>×</button>
         <div className="demo-action-icon"><span>✦</span></div>
