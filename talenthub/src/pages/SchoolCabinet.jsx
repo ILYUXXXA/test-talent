@@ -52,7 +52,7 @@ export default function SchoolCabinet() {
     setRawNotice(message)
   }
   function handleSchoolActionError(error, fallback) {
-    if (error?.status === 403 || error?.code === 'demo_restricted' || /демо|зарегистрируйте организацию/i.test(error?.message || '')) {
+    if (error?.code === 'demo_restricted' || (demoAccount && error?.status === 403)) {
       showDemoRestriction()
       return
     }
