@@ -2,7 +2,7 @@ import { currentUser as apiUser, listMarketplace, dashboard, schoolInfo, INTERES
 import { useStoreRevision } from '../data/hooks.js'
 import { useMemo, useState } from 'react'
 import OrganizationShell from '../components/OrganizationShell.jsx'
-import { currentUser, listEvents, listPartnerships, listSchools, publishEvent, sendPartnership, respondPartnership, updateEvent, eventRegistrations, updateEventRegistration } from '../data/store.js'
+import { currentUser, listEvents, listPartnerships, listSchools, publishEvent, sendPartnership, respondPartnership, updateEvent, eventRegistrations, updateEventRegistration, isDemoOrganization } from '../data/store.js'
 
 const DEFAULT_ORG = ''
 const SCHOOL_LIST = ['Лицей БГУ', 'Гимназия №1 Минск', 'СШ №4 Гродно', 'Гимназия №2 Брест']
@@ -40,6 +40,7 @@ export default function Company() {
   let user = null
   try { user = currentUser() } catch { user = null }
   const org = user?.orgName || DEFAULT_ORG
+  const demoAccount = isDemoOrganization()
   const events = useMemo(() => safeRead(listEvents, []).filter((item) => item.organizer === org), [version, org, apiRevision])
   const partnerships = useMemo(() => safeRead(listPartnerships, []).filter((item) => item.from === org || item.to === org), [version, org, apiRevision])
   const marketplace = useMemo(() => listMarketplace(), [apiRevision])
@@ -52,6 +53,7 @@ export default function Company() {
 
   async function handlePublish(event) {
     event.preventDefault()
+    if (demoAccount) { setNotice('В демо-аккаунте нельзя создавать мероприятия. Зарегистрируйте организацию, чтобы создавать публикации и полноценно работать в TalentHub.'); return }
     if (!eventTitle.trim() || !description.trim() || !date || !deadline || Number(seats) < 1 || pendingAction) return
     setPendingAction('publish')
     try {
@@ -113,6 +115,7 @@ export default function Company() {
   return <OrganizationShell tabs={[['overview','Обзор','overview'],['events','Мои мероприятия','events'],['partners','Сотрудничество','partners'],['market','Запросы школ','market'],['schools','Учреждения','schools'],['create','Опубликовать мероприятие','create']]} activeTab={tab} onTabChange={(id) => { setTab(id); setNotice('') }}>
     <main className="org-page"><div className="container org-container">
       <section className="org-page-heading"><h1>Кабинет компании</h1><p>Управляйте образовательными инициативами, партнёрствами и предложениями для учреждений образования.</p></section>
+      {demoAccount ? <div className="notice org-notice" role="status"><strong>Демо-режим</strong><p>В демо-аккаунте нельзя создавать и публиковать мероприятия. Зарегистрируйте организацию, чтобы создавать свои мероприятия и полноценно работать в TalentHub.</p><a className="btn btn-primary btn-small" href="/organization-registration?role=company">Зарегистрировать организацию</a></div> : null}
 
 
     {notice ? <div className="notice org-notice" role="status">{notice}</div> : null}
