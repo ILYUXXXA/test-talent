@@ -1,6 +1,5 @@
 import CabinetNav from './CabinetNav.jsx'
 import { Link } from 'react-router-dom'
-import { useEffect, useState } from 'react'
 
 const ICONS = {
   overview: <><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" /></>,
@@ -14,13 +13,6 @@ const ICONS = {
 }
 
 export default function OrganizationShell({ tabs, activeTab, onTabChange, children }) {
-  const [demoDialog, setDemoDialog] = useState(false)
-  const [demoRole, setDemoRole] = useState('school')
-  useEffect(() => {
-    const show = event => { setDemoRole(event.detail?.role === 'company' ? 'company' : 'school'); setDemoDialog(true) }
-    window.addEventListener('talenthub:demo-restriction', show)
-    return () => window.removeEventListener('talenthub:demo-restriction', show)
-  }, [])
   return (
     <>
       <header className="header student-header">
@@ -37,7 +29,6 @@ export default function OrganizationShell({ tabs, activeTab, onTabChange, childr
         </div>
       </header>
       {children}
-      {demoDialog ? <div className="demo-action-overlay" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) setDemoDialog(false) }}><section className="demo-action-dialog" role="dialog" aria-modal="true" aria-labelledby="demo-action-title"><button className="demo-action-close" type="button" aria-label="Закрыть" onClick={() => setDemoDialog(false)}>×</button><div className="demo-action-icon"><span>✦</span></div><span className="demo-action-kicker">TALENTHUB · ДЕМО-АККАУНТ</span><h2 id="demo-action-title">Эта возможность пока недоступна</h2><p>Вы можете знакомиться с кабинетом, но для этого действия нужна зарегистрированная организация. Создайте аккаунт школы или компании, чтобы пользоваться всеми возможностями TalentHub.</p><a className="demo-action-register" href={`/organization-registration?role=${demoRole}`}>Зарегистрировать организацию <span>→</span></a><button className="demo-action-back" type="button" onClick={() => setDemoDialog(false)}>Вернуться в демо-кабинет</button></section></div> : null}
     </>
   )
 }
