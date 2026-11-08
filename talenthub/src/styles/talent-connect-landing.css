@@ -1089,3 +1089,38 @@ html:has(.kt) { scroll-behavior: smooth; scroll-padding-top: 0; }
     margin-top: 0;
   }
 }
+
+
+/* Mobile hero spacing refinement: keep the headline close to the eyebrow.
+   Use the remaining height below the content as flexible space before the footer. */
+@media (max-width: 700px) {
+  .kt .kt-opening > .kt-hero {
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+    align-content: stretch;
+    gap: clamp(12px, 1.8dvh, 18px);
+    padding-top: 16px;
+  }
+  .kt .kt-opening .kt-hero-copy h1 {
+    grid-row: 2;
+    align-self: start;
+    margin: 0;
+  }
+  .kt .kt-opening .kt-hero-bottom {
+    grid-row: 3;
+    align-self: start;
+  }
+  .kt .kt-opening .kt-hero-footer {
+    grid-row: 5;
+    align-self: end;
+  }
+}
+@media (max-width: 420px) {
+  .kt .kt-opening > .kt-hero {
+    gap: 12px;
+    padding-top: 14px;
+  }
+  .kt .kt-opening .kt-hero-copy h1 {
+    font-size: clamp(25px, 7.8vw, 34px);
+    line-height: 1.14;
+  }
+}
