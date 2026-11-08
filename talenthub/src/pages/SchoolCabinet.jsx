@@ -1,6 +1,6 @@
 import { currentUser as apiUser, listMarketplace, dashboard, schoolInfo, isDemoOrganization } from '../data/store.js'
 import { useStoreRevision } from '../data/hooks.js'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import OrganizationShell from '../components/OrganizationShell.jsx'
 import {
   schoolStudents,
@@ -40,6 +40,11 @@ export default function SchoolCabinet() {
   const [tab, setTab] = useState('overview')
   const [expandedEvent, setExpandedEvent] = useState('')
   const [notice, setNotice] = useState('')
+  useEffect(() => {
+    if (!notice) return
+    const timeout = window.setTimeout(() => setNotice(''), 4200)
+    return () => window.clearTimeout(timeout)
+  }, [notice])
   const [query, setQuery] = useState('')
   const [eventTitle, setEventTitle] = useState('Открытая олимпиада по математике')
   const [category, setCategory] = useState('olympiad')
