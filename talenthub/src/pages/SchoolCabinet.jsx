@@ -111,7 +111,7 @@ export default function SchoolCabinet() {
 
     if (pendingAction) return
     setPendingAction('respond')
-    try { await respondPartnership(id, decision) } catch (error) { if (error.code !== 'demo_restricted') setNotice(error.message); setPendingAction(''); return }
+    try { await respondPartnership(id, decision) } catch (error) { handleSchoolActionError(error); setPendingAction(''); return }
     setPendingAction('')
     setVersion((value) => value + 1)
     setNotice(decision === 'accepted' ? 'Запрос принят. Можно переходить к согласованию деталей.' : 'Запрос отклонён.')
