@@ -41,22 +41,19 @@ export default function SchoolCabinet() {
   const [expandedEvent, setExpandedEvent] = useState('')
   const [notice, setRawNotice] = useState('')
   function showDemoRestriction() {
+    if (!demoAccount) return
     setRawNotice('')
     window.dispatchEvent(new CustomEvent('talenthub:demo-restriction', { detail: { role: 'school' } }))
   }
   function setNotice(message) {
-    if (demoAccount && message) {
-      showDemoRestriction()
-      return
-    }
-    if (typeof message === 'string' && /демо|зарегистрируйте организацию|demo_restricted/i.test(message)) {
+    if (demoAccount && typeof message === 'string' && /демо|зарегистрируйте организацию|demo_restricted/i.test(message)) {
       showDemoRestriction()
       return
     }
     setRawNotice(message)
   }
   function handleSchoolActionError(error, fallback) {
-    if (error?.code === 'demo_restricted' || (demoAccount && error?.status === 403)) {
+    if (demoAccount && (error?.code === 'demo_restricted' || error?.status === 403)) {
       showDemoRestriction()
       return
     }
