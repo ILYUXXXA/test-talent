@@ -1,0 +1,31 @@
+:root {
+  --bg: #F3F6FB;
+  --surface: #FFFFFF;
+  --ink: #142033;
+  --muted: #5C6B80;
+  --line: #E3E8F0;
+  --primary: #1D4ED8;
+  --primary-hover: #1E40AF;
+  --accent: #E8A317;
+  --accent-soft: #FFF6E0;
+  --success: #157A4B;
+  --success-soft: #E7F6EE;
+  --danger: #B42318;
+  --danger-soft: #FDECEC;
+  --warn: #B45309;
+  --warn-soft: #FEF3C7;
+  --dim: rgba(20, 32, 51, .62);
+  --shadow: 0 12px 32px rgba(20, 32, 51, .08);
+  --radius: 16px;
+  --radius-sm: 12px;
+  --font-display: "Unbounded", sans-serif;
+  --text-body: 18px;
+  --text-control: 16px;
+  --text-meta: 14px;
+  --text-card-title: 24px;
+  --text-section-title: 32px;
+  --control-height: 52px;
+  --control-compact-height: 44px;
+  --action-icon-size: 22px;
+  --font-body: "Manrope", sans-serif;
+}

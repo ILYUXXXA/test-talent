@@ -1,0 +1,27 @@
+name: TalentHub frontend build
+
+on:
+  push:
+    branches:
+      - feat/backend-integration
+      - feat/talenthub-full-ui-refresh
+  pull_request:
+    branches:
+      - feat/talenthub-full-ui-refresh
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: talenthub
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: npm run build
+        env:
+          VITE_API_BASE_URL: https://lbsuhack.onrender.com

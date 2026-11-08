@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+.env.*
+
+!.env.example
+
+reference-repo/
+vite-dev.log
+npm-debug.log*
+.DS_Store
