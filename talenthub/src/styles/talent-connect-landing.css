@@ -982,3 +982,110 @@ html:has(.kt) { scroll-behavior: smooth; scroll-padding-top: 0; }
     display: none;
   }
 }
+
+
+/* Final mobile viewport correction:
+   the header is fixed and therefore removed from normal flow.
+   Start the opening immediately below it and end it exactly at the viewport edge.
+   This prevents the next chapter heading from peeking into the first screen. */
+@media (max-width: 700px) {
+  .kt.kt {
+    min-height: 100%;
+    overflow-x: clip;
+  }
+  .kt .kt-opening {
+    box-sizing: border-box;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    width: 100%;
+    height: calc(100dvh - var(--landing-header-height));
+    min-height: calc(100svh - var(--landing-header-height));
+    margin-top: var(--landing-header-height);
+    padding: 0;
+    overflow: hidden;
+  }
+  .kt .kt-opening > .kt-hero {
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    min-height: 0;
+    height: 100%;
+    padding: 16px var(--landing-gutter) 0;
+    gap: clamp(10px, 1.8dvh, 16px);
+    align-content: stretch;
+    overflow: hidden;
+  }
+  .kt .kt-hero::before,
+  .kt .kt-hero::after {
+    display: none;
+    content: none;
+  }
+  .kt .kt-opening .kt-hero-top {
+    grid-row: 1;
+    min-width: 0;
+  }
+  .kt .kt-opening .kt-hero-copy h1 {
+    grid-row: 2;
+    align-self: end;
+    min-width: 0;
+    margin: 0;
+    font-size: clamp(25px, 8vw, 36px);
+    line-height: 1.15;
+  }
+  .kt .kt-opening .kt-hero-copy h1 > span,
+  .kt .kt-opening .kt-hero-copy h1 .kt-line-two {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .kt .kt-opening .kt-hero-copy h1 .kt-line-two {
+    margin-top: 8px;
+    padding: 4px 8px 7px;
+    gap: .2em;
+  }
+  .kt .kt-opening .kt-hero-bottom {
+    grid-row: 3;
+    align-self: end;
+    min-width: 0;
+    width: 100%;
+    padding: 0;
+  }
+  .kt .kt-opening .kt-hero-bottom p {
+    font-size: clamp(13px, 3.8vw, 16px);
+    line-height: 1.48;
+  }
+  .kt .kt-opening .kt-hero-actions {
+    margin-top: 14px;
+  }
+  .kt .kt-opening .kt-hero-actions .kt-cta {
+    min-height: 52px;
+    height: 52px;
+  }
+  .kt .kt-opening .kt-hero-footer {
+    grid-row: 4;
+    align-self: end;
+    min-height: 44px;
+    height: auto;
+    padding-block: 8px;
+    flex-wrap: nowrap;
+  }
+  .kt .kt-opening .kt-hero-footer > span:last-child {
+    display: none;
+  }
+  .kt .kt-opening .kt-ticker {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding-block: 12px;
+    overflow: hidden;
+  }
+  .kt .kt-opening .kt-ticker span {
+    font-size: clamp(17px, 4.8vw, 23px);
+    gap: 18px;
+    padding-right: 18px;
+  }
+  .kt .kt-section:first-of-type {
+    margin-top: 0;
+  }
+}
