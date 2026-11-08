@@ -179,3 +179,34 @@
     align-self: flex-start;
   }
 }
+
+
+/* Mobile cabinet navigation: one horizontally scrollable row, never a wrapped grid. */
+@media (max-width: 900px) {
+  .student-header .org-shell-tabs {
+    display: flex;
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    padding: 5px;
+  }
+  .student-header .org-shell-tabs::-webkit-scrollbar { display: none; }
+  .student-header .org-shell-tabs > a,
+  .student-header .org-shell-tabs > button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    scroll-snap-align: start;
+  }
+}
