@@ -74,6 +74,7 @@ export default function Applications() {
       return
     }
     setMessage('Заявка отменена.')
+    window.dispatchEvent(new CustomEvent('talenthub:action-success', { detail: { message: 'Заявка успешно отменена.' } }))
     setOpen((current) => (current && current.eventId === eventId ? { ...current, status: 'отменена' } : current))
     refresh()
   }
@@ -95,6 +96,7 @@ export default function Applications() {
       return
     }
     setMessage(result.already ? `Заявка уже есть: ${result.status}.` : 'Заявка подана.')
+    if (!result.already) window.dispatchEvent(new CustomEvent('talenthub:action-success', { detail: { message: 'Заявка на мероприятие успешно подана.' } }))
     setOpen((current) => (current ? { ...current, status: result.status || 'подана' } : current))
     refresh()
   }
