@@ -71,6 +71,7 @@ export default function Profile() {
     }
     readCabinet()
     setMessage('Настройки сохранены. Список мероприятий подстроится под интересы.')
+    window.dispatchEvent(new CustomEvent('talenthub:action-success', { detail: { message: 'Настройки профиля успешно сохранены.' } }))
   }
 
   function onLogout() {
@@ -92,6 +93,7 @@ export default function Profile() {
     readCabinet()
     setSchoolOpen(false)
     setMessage('Учреждение образования обновлено.')
+    window.dispatchEvent(new CustomEvent('talenthub:action-success', { detail: { message: 'Учреждение образования успешно обновлено.' } }))
   }
 
   return (
