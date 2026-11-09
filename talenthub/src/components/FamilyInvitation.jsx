@@ -1,3 +1,4 @@
+import { ActionButton } from './ActionControls.jsx'
 import { useEffect, useState } from 'react'
 import { getFamilyInvitation, createFamilyInvitation, deleteFamilyInvitation } from '../data/store.js'
 
@@ -16,8 +17,8 @@ export default function FamilyInvitation() {
   async function change(remove = false) {
     if (busy) return
     setBusy(true); setError(''); setNote('')
-    try { const data = await (remove ? deleteFamilyInvitation() : createFamilyInvitation()); setInvitation(data.invitation); setConfirmDelete(false); window.dispatchEvent(new CustomEvent('talenthub:action-success', { detail: { message: remove ? 'Семейная ссылка успешно удалена.' : 'Семейная ссылка успешно создана.' } })) }
-    catch (e) { setError(e.message) } finally { setBusy(false) }
+    try { const data = await (remove ? deleteFamilyInvitation() : createFamilyInvitation()); setInvitation(data.invitation); setConfirmDelete(false); setNote(remove ? 'Семейная ссылка удалена.' : 'Семейная ссылка создана.') }
+    catch (e) { if (e.code === 'demo_restricted') return; setError(e.message) } finally { setBusy(false) }
   }
   const url = invitation ? `${window.location.origin}/family/join/${encodeURIComponent(invitation.token)}` : ''
   return <section className="card stack" aria-labelledby="family-invitation-title" aria-busy={busy}>
@@ -27,11 +28,11 @@ export default function FamilyInvitation() {
     {error ? <p className="notice" role="alert">{error}</p> : null}
     {invitation ? <>
       <label className="field"><span>Семейная ссылка</span><input readOnly value={url} onFocus={e => e.target.select()} /></label>
-      <div className="row"><button className="btn btn-primary" disabled={busy} onClick={async () => {
-        try { await navigator.clipboard.writeText(url); setNote('Ссылка скопирована.'); setError(''); window.dispatchEvent(new CustomEvent('talenthub:action-success', { detail: { message: 'Семейная ссылка скопирована.' } })) } catch { setError('Не удалось скопировать. Выделите ссылку и скопируйте её вручную.') }
-      }}>Скопировать ссылку</button><button className="btn btn-ghost" disabled={busy} onClick={() => setConfirmDelete(true)}>Удалить ссылку</button></div>
-      {confirmDelete ? <div className="notice stack"><p>Ссылка перестанет работать. Уже добавленные дети останутся в семье.</p><div className="row"><button className="btn btn-primary" disabled={busy} onClick={() => change(true)}>Удалить</button><button className="btn btn-ghost" disabled={busy} onClick={() => setConfirmDelete(false)}>Отмена</button></div></div> : null}
-    </> : <button className="btn btn-primary" disabled={busy} onClick={() => change()}>Создать ссылку</button>}
+      <div className="row"><ActionButton className="btn btn-primary" disabled={busy} onClick={async () => {
+        try { await navigator.clipboard.writeText(url); setNote('Ссылка скопирована.'); setError('') } catch { setError('Не удалось скопировать. Выделите ссылку и скопируйте её вручную.') }
+      }}>Скопировать ссылку</ActionButton><ActionButton className="btn btn-ghost" disabled={busy} onClick={() => setConfirmDelete(true)}>Удалить ссылку</ActionButton></div>
+      {confirmDelete ? <div className="notice stack"><p>Ссылка перестанет работать. Уже добавленные дети останутся в семье.</p><div className="row"><ActionButton className="btn btn-primary" disabled={busy} onClick={() => change(true)}>Удалить</ActionButton><ActionButton className="btn btn-ghost" disabled={busy} onClick={() => setConfirmDelete(false)}>Отмена</ActionButton></div></div> : null}
+    </> : <ActionButton className="btn btn-primary" disabled={busy} onClick={() => change()}>Создать ссылку</ActionButton>}
     {note ? <p role="status">{note}</p> : null}
   </section>
 }

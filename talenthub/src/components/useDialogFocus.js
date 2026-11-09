@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react'
 
+const activeDialogs = []
+
 const focusable = 'button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
 
 // Preserve the existing dialog markup while keeping its keyboard focus inside.
@@ -11,6 +13,8 @@ export function useDialogFocus(open, onClose) {
   useEffect(() => {
     if (!open || !panelRef.current) return
     const panel = panelRef.current
+    const token = {}
+    activeDialogs.push(token)
     const opener = document.activeElement
     const overflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
@@ -18,6 +22,7 @@ export function useDialogFocus(open, onClose) {
     const initialFocus = controls()[0] || panel
     initialFocus.focus({ preventScroll: true })
     function onKey(event) {
+      if (activeDialogs.at(-1) !== token) return
       if (event.key === 'Escape') {
         event.preventDefault()
         closeRef.current()
@@ -36,6 +41,7 @@ export function useDialogFocus(open, onClose) {
     }
     document.addEventListener('keydown', onKey)
     return () => {
+      activeDialogs.splice(activeDialogs.indexOf(token), 1)
       document.removeEventListener('keydown', onKey)
       document.body.style.overflow = overflow
       if (opener?.isConnected) opener.focus({ preventScroll: true })

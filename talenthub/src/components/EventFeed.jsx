@@ -1,3 +1,4 @@
+import { ActionButton } from './ActionControls.jsx'
 import { useDialogFocus } from './useDialogFocus.js'
 import { getState, fetchEvent } from '../data/store.js'
 import { useCatalog, useRecommendations } from '../data/hooks.js'
@@ -70,6 +71,7 @@ export default function EventFeed({
   interests = [],
   childId,
   applications = [],
+  suggestedEventIds = [],
   actionLabel = 'Зарегистрироваться',
   recommendTitle = 'Рекомендуем для тебя',
   className,
@@ -91,7 +93,7 @@ export default function EventFeed({
   const detailRef = useDialogFocus(Boolean(open), () => setOpen(null))
 
   async function openEvent(event) {
-    try { setOpen(await fetchEvent(event.id)) } catch (error) { setMessage(error.message) }
+    try { setOpen(await fetchEvent(event.id)) } catch (error) { if (error.code === 'demo_restricted') return; setMessage(error.message) }
   }
 
   function toggleDirection(name) {
@@ -117,12 +119,12 @@ export default function EventFeed({
     + Number(directions.length > 0)
 
   async function runAction(event) {
-    if (!onAction) return
+    if (!onAction || pendingAction || suggestedEventIds.includes(event.id)) return
     let result
     setPendingAction(event.id)
     try {
       result = await onAction(event)
-    } catch (error) {
+    } catch (error) { if (error.code === 'demo_restricted') return;
       setMessage(error.message || 'Не удалось выполнить действие.')
       return
     } finally {
@@ -138,19 +140,20 @@ export default function EventFeed({
     setOpen(event)
   }
 
-  function ActionButton({ event }) {
+  function EventActionButton({ event }) {
+    if (suggestedEventIds.includes(event.id)) return <EventSuggestionStatus />
     const existing = activeApplication(applications, event.id)
     if (existing) {
       return (
-        <button type="button" className="btn btn-ghost" onClick={(mouse) => { mouse.stopPropagation(); openEvent(event) }}>
+        <ActionButton type="button" className="btn btn-ghost" onClick={(mouse) => { mouse.stopPropagation(); openEvent(event) }}>
           {existing.status}
-        </button>
+        </ActionButton>
       )
     }
     return (
-      <button type="button" className="btn btn-primary" disabled={pendingAction === event.id} onClick={(mouse) => { mouse.stopPropagation(); runAction(event) }}>
+      <ActionButton type="button" className="btn btn-primary" disabled={pendingAction === event.id} onClick={(mouse) => { mouse.stopPropagation(); return runAction(event) }}>
         {pendingAction === event.id ? <><span className="spinner spinner-light" /> Отправляем…</> : actionLabel}
-      </button>
+      </ActionButton>
     )
   }
 
@@ -175,7 +178,7 @@ export default function EventFeed({
             onChange={(event) => setQuery(event.target.value)}
           />
         </label>
-        <button
+        <ActionButton
           type="button"
           className="btn btn-primary filter-toggle"
           aria-expanded={filtersOpen}
@@ -189,7 +192,7 @@ export default function EventFeed({
           <svg className="chevron" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M6 9l6 6 6-6" />
           </svg>
-        </button>
+        </ActionButton>
       </div>
       {filtersOpen ? (
         <div className="card filter-panel" id="event-filters">
@@ -245,20 +248,20 @@ export default function EventFeed({
                   <p className="muted">{event.organizer}</p>
                   <p className="muted">{formatDate(event.date)} · {event.city} · {event.format}</p>
                   <p className="muted">Дедлайн: {formatDate(event.deadline)}</p>
-                  <ActionButton event={event} />
+                  <EventActionButton event={event} />
                 </article>
               ))}
             </div>
           </>
         ) : null}
-        <button
+        <ActionButton
           type="button"
           className="btn btn-primary recommend-more"
           aria-expanded={listOpen}
           onClick={() => setListOpen((value) => !value)}
         >
           {listOpen ? 'Свернуть список' : 'Посмотреть всё'}
-        </button>
+        </ActionButton>
       </section>
       {listOpen ? <p className="muted">Показано {visible.length} из {published.length}</p> : null}
       {listOpen && visible.length === 0 ? (
@@ -277,7 +280,7 @@ export default function EventFeed({
               <p className="muted">{event.organizer}</p>
               <p className="muted">{formatDate(event.date)} · {event.city} · {event.format}</p>
               <p className="muted">Дедлайн: {formatDate(event.deadline)}</p>
-              <ActionButton event={event} />
+              <EventActionButton event={event} />
             </article>
           ))}
         </div>
@@ -295,7 +298,7 @@ export default function EventFeed({
           >
             <div className="spread">
               <span className="badge badge-muted">{categoryLabel(opened)}</span>
-              <button type="button" className="btn btn-ghost btn-small" onClick={() => setOpen(null)}>Закрыть</button>
+              <ActionButton type="button" className="btn btn-ghost btn-small" onClick={() => setOpen(null)}>Закрыть</ActionButton>
             </div>
             <h2 id="event-detail-title">{opened.title}</h2>
             <dl className="detail-grid">
@@ -319,16 +322,20 @@ export default function EventFeed({
               <dd>{opened.seats ?? '—'}</dd>
             </dl>
             {opened.description ? <p>{opened.description}</p> : null}
-            {openedApp ? (
+            {suggestedEventIds.includes(opened.id) ? <EventSuggestionStatus /> : openedApp ? (
               <p className="notice">Ваша заявка: {openedApp.status}.</p>
             ) : (
-              <button type="button" className="btn btn-primary" disabled={pendingAction === opened.id} onClick={() => runAction(opened)}>
+              <ActionButton type="button" className="btn btn-primary" disabled={pendingAction === opened.id} onClick={() => runAction(opened)}>
                 {pendingAction === opened.id ? <><span className="spinner spinner-light" /> Отправляем…</> : actionLabel}
-              </button>
+              </ActionButton>
             )}
           </div>
         </div>
       ) : null}
     </div>
   )
+}
+
+export function EventSuggestionStatus() {
+  return <p className="notice" role="status">Уже предложено ребёнку.</p>
 }

@@ -828,7 +828,7 @@ input[type="checkbox"], input[type="radio"] { min-height: 18px; }
 .auth-container .btn, .auth-container .field input,
 .auth-container .field select, .auth-container .role-pick .btn { min-height: var(--control-height); }
 .parent-child-avatar { flex-shrink: 0; }
-.org-page-heading h1, .auth-container > h1 { hyphens: auto; }
+.org-page-heading h1, .auth-container > h1 { hyphens: none; }
 @media (max-width: 760px) {
   .event-grid, .apply-grid, .mod-grid, .grid-2 { grid-template-columns: minmax(0, 1fr); }
   .org-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -927,8 +927,8 @@ input[type="checkbox"], input[type="radio"] { min-height: 18px; }
 .demo-gate-card p { margin: 0 auto 24px; max-width: 420px; color: #71809a; font-size: 15px; line-height: 1.75; }
 .demo-gate-cta { display: inline-flex; min-height: 50px; align-items: center; justify-content: center; gap: 12px; padding: 0 22px; }
 .demo-gate-card > small { display: block; margin-top: 18px; color: #98a4b7; font-size: 12px; }
-.action-toast { position: fixed; z-index: 11000; top: 20px; left: 50%; display: flex; width: max-content; max-width: min(560px,calc(100vw - 32px)); align-items: center; gap: 11px; margin: 0; padding: 14px 19px; border: 1px solid #bce8d0; border-radius: 14px; color: #17633a; background: #f0fff6; box-shadow: 0 14px 40px rgba(20,70,45,.16); transform: translateX(-50%); animation: action-toast-in .22s ease-out; }
-.action-toast-check { display: grid; width: 25px; height: 25px; flex: 0 0 25px; place-items: center; border-radius: 50%; color: #fff; background: #20a45a; font-weight: 900; }
+.action-toast { position: fixed; z-index: 11000; top: 20px; left: 50%; display: flex; width: max-content; max-width: min(560px,calc(100vw - 32px)); align-items: center; gap: 11px; margin: 0; padding: 14px 19px; border: 1px solid #bed0ff; border-radius: 14px; color: #2451d8; background: #f0f5ff; box-shadow: 0 14px 40px rgba(48,94,229,.16); transform: translateX(-50%); animation: action-toast-in .22s ease-out; }
+.action-toast-check { display: grid; width: 25px; height: 25px; flex: 0 0 25px; place-items: center; border-radius: 50%; color: #fff; background: #2860ef; font-weight: 900; }
 @keyframes action-toast-in { from { opacity: 0; transform: translate(-50%,-10px); } to { opacity: 1; transform: translate(-50%,0); } }
 @media(max-width:560px) { .demo-gate { padding: 16px; } .demo-gate-card { border-radius: 20px; } .demo-gate-cta { width: 100%; } }
 
@@ -960,7 +960,7 @@ input[type="checkbox"], input[type="radio"] { min-height: 18px; }
 
 
 /* Modal confirmation for successful actions in school and company cabinets */
-.success-action-dialog .demo-action-kicker { color: #16845a; }
-.success-action-icon { color: #fff; background: linear-gradient(145deg,#28b978,#128653); box-shadow: 0 10px 24px rgba(24,151,97,.24); }
-.success-action-button { width: 100%; border: 0; cursor: pointer; background: linear-gradient(100deg,#159765,#22b879); box-shadow: 0 8px 20px rgba(24,151,97,.2); }
-.success-action-button:hover { box-shadow: 0 12px 26px rgba(24,151,97,.28); }
+.success-action-dialog .demo-action-kicker { color: #5474ca; }
+.success-action-icon { color: #fff; background: linear-gradient(145deg,#4778ff,#2451d8); box-shadow: 0 10px 24px rgba(48,94,229,.24); }
+.success-action-button { width: 100%; border: 0; cursor: pointer; background: linear-gradient(100deg,#2860ef,#477bff); box-shadow: 0 8px 20px rgba(48,94,229,.2); }
+.success-action-button:hover { box-shadow: 0 12px 26px rgba(48,94,229,.28); }

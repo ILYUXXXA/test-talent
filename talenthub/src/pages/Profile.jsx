@@ -1,3 +1,4 @@
+import { ActionButton, ActionForm } from '../components/ActionControls.jsx'
 import { useStoreRevision } from '../data/hooks.js'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -64,7 +65,7 @@ export default function Profile() {
       return
     }
     let saved
-    try { saved = await completeProfile({ grade, city, interests }) } catch (error) { setMessage(error.message); return }
+    try { saved = await completeProfile({ grade, city, interests }) } catch (error) { if (error.code === 'demo_restricted') return; setMessage(error.message); return }
     if (!saved) {
       setMessage('Сохранить настройки может только вошедший школьник.')
       return
@@ -84,7 +85,7 @@ export default function Profile() {
       return
     }
     let saved
-    try { saved = await changeSchool(schoolDraft) } catch (error) { setMessage(error.message); return }
+    try { saved = await changeSchool(schoolDraft) } catch (error) { if (error.code === 'demo_restricted') return; setMessage(error.message); return }
     if (!saved) {
       setMessage('Сменить учреждение может только вошедший школьник.')
       return
@@ -120,7 +121,7 @@ export default function Profile() {
                 </div>
               </dl>
             )}
-            <button
+            <ActionButton
               type="button"
               className="btn btn-ghost profile-switch"
               onClick={() => {
@@ -132,17 +133,17 @@ export default function Profile() {
               }}
             >
               Сменить учреждение образования
-            </button>
+            </ActionButton>
             {schoolOpen ? (
               <div className="field profile-school">
                 <select value={schoolDraft} onChange={(event) => setSchoolDraft(event.target.value)}>
                   {schools.map((name) => <option key={name} value={name}>{name}</option>)}
                 </select>
-                <button type="button" className="btn btn-primary" onClick={onChangeSchool}>Сохранить изменения</button>
+                <ActionButton type="button" className="btn btn-primary" onClick={onChangeSchool}>Сохранить изменения</ActionButton>
               </div>
             ) : null}
           </section>
-          <form id="profile-form" className="card" onSubmit={onSave}>
+          <ActionForm id="profile-form" className="card" onSubmit={onSave}>
             <h2>Настройки</h2>
             <p className="muted">Класс и интересы. Имя, дата рождения, почта, школа и город здесь не меняются.</p>
             <label className="field">
@@ -159,7 +160,7 @@ export default function Profile() {
                   {interests.map((name) => (
                     <span key={name} className="chip interest-chip">
                       {name}
-                      <button
+                      <ActionButton
                         type="button"
                         className="chip-remove"
                         aria-label={`Убрать ${name}`}
@@ -167,7 +168,7 @@ export default function Profile() {
                         onClick={() => removeInterest(name)}
                       >
                         ×
-                      </button>
+                      </ActionButton>
                     </span>
                   ))}
                 </div>
@@ -191,15 +192,15 @@ export default function Profile() {
                     }
                   }}
                 />
-                <button type="button" className="btn btn-ghost" disabled={!cabinet.loggedIn} onClick={() => addInterest()}>
+                <ActionButton type="button" className="btn btn-ghost" disabled={!cabinet.loggedIn} onClick={() => addInterest()}>
                   Добавить
-                </button>
+                </ActionButton>
               </div>
               {suggestions.length > 0 ? (
                 <ul className="suggest" role="listbox">
                   {suggestions.map((name) => (
                     <li key={name}>
-                      <button type="button" onClick={() => addInterest(name)}>{name}</button>
+                      <ActionButton type="button" onClick={() => addInterest(name)}>{name}</ActionButton>
                     </li>
                   ))}
                 </ul>
@@ -208,15 +209,15 @@ export default function Profile() {
             {message ? <p className="notice">{message}</p> : null}
             {cabinet.loggedIn ? (
               <div className="profile-actions">
-                <button type="submit" className="btn btn-primary">Сохранить профиль</button>
-                <button type="button" className="btn btn-ghost" onClick={onLogout}>Выйти</button>
+                <ActionButton type="submit" className="btn btn-primary">Сохранить профиль</ActionButton>
+                <ActionButton type="button" className="btn btn-ghost" onClick={onLogout}>Выйти</ActionButton>
               </div>
             ) : (
               <div className="profile-actions">
                 <Link className="btn btn-primary" to="/auth">Войти и настроить</Link>
               </div>
             )}
-          </form>
+          </ActionForm>
         </div>
       </div>
     </main>

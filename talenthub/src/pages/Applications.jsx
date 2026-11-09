@@ -1,3 +1,4 @@
+import { ActionButton } from '../components/ActionControls.jsx'
 import { useDialogFocus } from '../components/useDialogFocus.js'
 import { useStoreRevision } from '../data/hooks.js'
 import { useMemo, useState } from 'react'
@@ -61,7 +62,7 @@ export default function Applications() {
     let result
     try {
       result = await cancelRegistration(eventId)
-    } catch (error) {
+    } catch (error) { if (error.code === 'demo_restricted') return;
       setMessage(error.message || 'Не удалось отменить заявку.')
       return
     }
@@ -82,7 +83,7 @@ export default function Applications() {
     let result
     try {
       result = await registerForEvent(event.id)
-    } catch (error) {
+    } catch (error) { if (error.code === 'demo_restricted') return;
       setMessage(error.message || 'Не удалось отправить заявку.')
       return
     }
@@ -146,17 +147,17 @@ export default function Applications() {
                       {item.city ? ` · ${item.city}` : ''}
                     </p>
                     {cabinet.loggedIn && item.status !== 'отменена' && item.status !== 'отклонена' ? (
-                      <button
+                      <ActionButton
                         type="button"
                         className="btn btn-ghost"
                         disabled={item.attended || item.eventStatus === 'completed'}
                         onClick={(mouse) => {
                           mouse.stopPropagation()
-                          onCancel(item.eventId)
+                          return onCancel(item.eventId)
                         }}
                       >
                         Отменить заявку
-                      </button>
+                      </ActionButton>
                     ) : null}
                   </div>
                 </article>
@@ -178,7 +179,7 @@ export default function Applications() {
           >
             <div className="spread">
               <span className="badge badge-muted">{categoryLabel(opened)}</span>
-              <button type="button" className="btn btn-ghost btn-small" onClick={() => setOpen(null)}>Закрыть</button>
+              <ActionButton type="button" className="btn btn-ghost btn-small" onClick={() => setOpen(null)}>Закрыть</ActionButton>
             </div>
             <h2 id="application-detail-title">{opened.title}</h2>
             <dl className="detail-grid">
@@ -205,7 +206,7 @@ export default function Applications() {
             {open.status && open.status !== 'отменена' ? (
               <p className="notice">Ваша заявка: {open.status}.</p>
             ) : null}
-            <button type="button" className="btn btn-primary" onClick={() => onRegister(opened)}>Подать заявку</button>
+            <ActionButton type="button" className="btn btn-primary" onClick={() => onRegister(opened)}>Подать заявку</ActionButton>
           </div>
         </div>
       ) : null}

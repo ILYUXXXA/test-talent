@@ -1,3 +1,4 @@
+import { ActionButton } from '../components/ActionControls.jsx'
 import { useDialogFocus } from '../components/useDialogFocus.js'
 import { getState, fetchEvent } from '../data/store.js'
 import { useCatalog, useRecommendations } from '../data/hooks.js'
@@ -86,7 +87,7 @@ export default function Events() {
   const detailRef = useDialogFocus(Boolean(open), () => setOpen(null))
 
   async function openEvent(event) {
-    try { setOpen(await fetchEvent(event.id)) } catch (error) { setMessage(error.message) }
+    try { setOpen(await fetchEvent(event.id)) } catch (error) { if (error.code === 'demo_restricted') return; setMessage(error.message) }
   }
 
   function toggleDirection(name) {
@@ -123,7 +124,7 @@ export default function Events() {
     let result
     try {
       result = await registerForEvent(event.id)
-    } catch (error) {
+    } catch (error) { if (error.code === 'demo_restricted') return;
       if (error.status === 401) { navigate('/auth'); return }
       if (error.code === 'profile_incomplete') { navigate('/welcome'); return }
       setMessage(error.message || 'Не удалось отправить заявку.')
@@ -147,15 +148,15 @@ export default function Events() {
     const existing = activeApplication(cabinet.applications, event.id)
     if (existing) {
       return (
-        <button type="button" className="btn btn-ghost" onClick={(mouse) => { mouse.stopPropagation(); openEvent(event) }}>
+        <ActionButton type="button" className="btn btn-ghost" onClick={(mouse) => { mouse.stopPropagation(); openEvent(event) }}>
           {existing.status}
-        </button>
+        </ActionButton>
       )
     }
     return (
-      <button type="button" className="btn btn-primary" onClick={(mouse) => { mouse.stopPropagation(); onRegister(event) }}>
+      <ActionButton type="button" className="btn btn-primary" onClick={(mouse) => { mouse.stopPropagation(); return onRegister(event) }}>
         Подать заявку
-      </button>
+      </ActionButton>
     )
   }
 
@@ -181,7 +182,7 @@ export default function Events() {
               onChange={(event) => setQuery(event.target.value)}
             />
           </label>
-          <button
+          <ActionButton
             type="button"
             className="btn btn-primary filter-toggle"
             aria-expanded={filtersOpen}
@@ -195,7 +196,7 @@ export default function Events() {
             <svg className="chevron" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M6 9l6 6 6-6" />
             </svg>
-          </button>
+          </ActionButton>
         </div>
         {filtersOpen ? (
           <div className="card filter-panel" id="event-filters">
@@ -257,14 +258,14 @@ export default function Events() {
               </div>
             </>
           ) : null}
-          <button
+          <ActionButton
             type="button"
             className="btn btn-primary recommend-more"
             aria-expanded={listOpen}
             onClick={() => setListOpen((value) => !value)}
           >
             {listOpen ? 'Скрыть список' : 'Показать все мероприятия'}
-          </button>
+          </ActionButton>
         </section>
         {listOpen ? <p className="muted">Показано {visible.length} из {published.length}</p> : null}
         {listOpen && visible.length === 0 ? (
@@ -302,7 +303,7 @@ export default function Events() {
           >
             <div className="spread">
               <span className="badge badge-muted">{categoryLabel(opened)}</span>
-              <button type="button" className="btn btn-ghost btn-small" onClick={() => setOpen(null)}>Закрыть</button>
+              <ActionButton type="button" className="btn btn-ghost btn-small" onClick={() => setOpen(null)}>Закрыть</ActionButton>
             </div>
             <h2 id="event-detail-title">{opened.title}</h2>
             <dl className="detail-grid">
@@ -329,7 +330,7 @@ export default function Events() {
             {openedApp ? (
               <p className="notice">Ваша заявка: {openedApp.status}.</p>
             ) : (
-              <button type="button" className="btn btn-primary" onClick={() => onRegister(opened)}>Подать заявку</button>
+              <ActionButton type="button" className="btn btn-primary" onClick={() => onRegister(opened)}>Подать заявку</ActionButton>
             )}
           </div>
         </div>

@@ -1,3 +1,4 @@
+import { ActionButton } from '../components/ActionControls.jsx'
 import { useDialogFocus } from '../components/useDialogFocus.js'
 import OrganizationAccounts from '../components/OrganizationAccounts.jsx'
 import CabinetNav from '../components/CabinetNav.jsx'
@@ -73,7 +74,7 @@ function ModeratorBar({ section, onSection, counts }) {
           {TABS.map((tab) => {
             const count = counts[tab.id]
             return (
-              <button
+              <ActionButton
                 key={tab.id}
                 type="button"
                 className={section === tab.id ? 'active' : undefined}
@@ -83,7 +84,7 @@ function ModeratorBar({ section, onSection, counts }) {
                 {tab.icon}
                 {tab.label}
                 {count > 0 ? <span className="tab-count">{count}</span> : null}
-              </button>
+              </ActionButton>
             )
           })}
         </CabinetNav>
@@ -94,7 +95,7 @@ function ModeratorBar({ section, onSection, counts }) {
 
 function QueueCard({ item, kind, onOpen }) {
   return (
-    <button type="button" className="card mod-card" onClick={onOpen}>
+    <ActionButton type="button" className="card mod-card" onClick={onOpen}>
       <span className="badge badge-pending">На проверке</span>
       <span className="card-title">{item.title}</span>
       {kind === 'events' ? (
@@ -120,7 +121,7 @@ function QueueCard({ item, kind, onOpen }) {
           <p>{item.text}</p>
         </>
       ) : null}
-    </button>
+    </ActionButton>
   )
 }
 
@@ -160,7 +161,7 @@ function Detail({ item, kind, onClose, onDecide }) {
       >
         <div className="spread">
           <span className="badge badge-pending">На проверке</span>
-          <button type="button" className="btn btn-ghost btn-small" onClick={onClose}>Закрыть</button>
+          <ActionButton type="button" className="btn btn-ghost btn-small" onClick={onClose}>Закрыть</ActionButton>
         </div>
         <h2 id="moderator-detail-title">{item.title}</h2>
         {kind === 'events' ? (
@@ -218,14 +219,14 @@ function Detail({ item, kind, onClose, onDecide }) {
         <p className="muted">{note}</p>
         <div className="row">
           {actions.map((action) => (
-            <button
+            <ActionButton
               key={action.status}
               type="button"
               className={action.tone}
               onClick={() => onDecide(action.status)}
             >
               {action.label}
-            </button>
+            </ActionButton>
           ))}
         </div>
       </div>
@@ -261,7 +262,7 @@ export default function Admin() {
   async function onDecide(status) {
     if (!open) return
     try { await moderate(open.kind, open.id, status); setOpen(null); setError('') }
-    catch (error) { setError(error.message) }
+    catch (error) { if (error.code === 'demo_restricted') return; setError(error.message) }
   }
 
   return (

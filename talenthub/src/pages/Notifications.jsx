@@ -1,3 +1,4 @@
+import { ActionButton } from '../components/ActionControls.jsx'
 import { useStoreRevision } from '../data/hooks.js'
 import { useState } from 'react'
 import { markNotificationRead, studentCabinet } from '../data/store.js'
@@ -37,7 +38,7 @@ export default function Notifications() {
 
   async function openNotification(item) {
     if (item.read) return
-    try { await markNotificationRead(item.id); setError('') } catch (error) { setError(error.message) }
+    try { await markNotificationRead(item.id); setError('') } catch (error) { if (error.code === 'demo_restricted') return; setError(error.message) }
   }
 
   return (
@@ -56,7 +57,7 @@ export default function Notifications() {
           <ul className="inbox">
             {items.map((item) => (
               <li key={item.id}>
-                <button
+                <ActionButton
                   type="button"
                   className={item.read ? 'inbox-row' : 'inbox-row unread'}
                   onClick={() => openNotification(item)}
@@ -71,7 +72,7 @@ export default function Notifications() {
                     {!item.read ? <span className="inbox-unread-label"><span className="inbox-unread-dot" />Непрочитано · нажмите, чтобы прочитать</span> : null}
                   </span>
                   <time className="inbox-time" dateTime={item.date}>{formatDate(item.date)}</time>
-                </button>
+                </ActionButton>
               </li>
             ))}
           </ul>

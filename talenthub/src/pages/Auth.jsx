@@ -1,3 +1,4 @@
+import { ActionButton, ActionForm } from '../components/ActionControls.jsx'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { studentDestination } from '../data/family-invitation.js'
@@ -102,7 +103,7 @@ export default function Auth() {
         return
       }
       navigate(user.role === 'student' ? studentDestination(user) : path)
-    } catch (error) {
+    } catch (error) { if (error.code === 'demo_restricted') return;
       setError(error.message || 'Неверная почта или пароль для этой роли.')
     } finally { setBusy(false) }
   }
@@ -127,7 +128,7 @@ export default function Auth() {
         return
       }
       navigate(role === 'parent' ? '/parent' : studentDestination(userFrom(result)))
-    } catch (error) {
+    } catch (error) { if (error.code === 'demo_restricted') return;
       setError(error.message || 'Не удалось зарегистрироваться. Проверьте данные.')
     } finally { setBusy(false) }
   }
@@ -139,9 +140,9 @@ export default function Auth() {
           <span className="org-eyebrow">TALENTHUB · ЕДИНАЯ ПЛАТФОРМА</span><h1>Выберите профиль</h1><p className="lead">Перейдите в кабинет своей роли или войдите по данным аккаунта.</p>
           <div className="role-pick">
             {ROLES.map((item) => (
-              <button disabled={busy} key={item.id} type="button" className="btn btn-ghost" onClick={() => choose(item.id)}>
+              <ActionButton disabled={busy} key={item.id} type="button" className="btn btn-ghost" onClick={() => choose(item.id)}>
                 {item.label}
-              </button>
+              </ActionButton>
             ))}
           </div>
         </div>
@@ -152,10 +153,10 @@ export default function Auth() {
   return (
     <main className="auth-page">
       <div className="container narrow auth-container">
-        <button disabled={busy} type="button" className="btn btn-ghost" onClick={() => choose('')}>К выбору роли</button>
+        <ActionButton disabled={busy} type="button" className="btn btn-ghost" onClick={() => choose('')}>К выбору роли</ActionButton>
         <h1>{mode === 'register' ? (role === 'parent' ? 'Регистрация родителя' : 'Регистрация школьника') : current.label}</h1>
         {mode === 'register' ? (
-          <form className="card stack" onSubmit={onRegister} aria-busy={busy}>
+          <ActionForm className="card stack" onSubmit={onRegister} aria-busy={busy}>
             <label className="field">
               <span>Имя</span>
               <input value={firstName} autoComplete="given-name" maxLength={100} required onChange={(event) => setFirstName(event.target.value)} />
@@ -184,11 +185,11 @@ export default function Auth() {
               </select>
             </label> : null}
             {error ? <p className="notice" role="alert">{error}</p> : null}
-            <button disabled={busy} className="btn btn-primary" type="submit">{busy ? <><span className="th-spinner" aria-hidden="true" /> Создаём аккаунт…</> : 'Зарегистрироваться'}</button>
-            <button disabled={busy} type="button" className="btn btn-ghost" onClick={() => { setMode('login'); setError('') }}>Уже есть аккаунт</button>
-          </form>
+            <ActionButton disabled={busy} className="btn btn-primary" type="submit">{busy ? <><span className="th-spinner" aria-hidden="true" /> Создаём аккаунт…</> : 'Зарегистрироваться'}</ActionButton>
+            <ActionButton disabled={busy} type="button" className="btn btn-ghost" onClick={() => { setMode('login'); setError('') }}>Уже есть аккаунт</ActionButton>
+          </ActionForm>
         ) : (
-          <form className="card stack" onSubmit={onLogin} aria-busy={busy}>
+          <ActionForm className="card stack" onSubmit={onLogin} aria-busy={busy}>
             {organizationRole ? <label className="field"><span>Токен доступа</span><input type="password" value={accessToken} autoComplete="off" required onChange={event => setAccessToken(event.target.value)} /></label> : <>
             <label className="field">
               <span>Электронная почта</span>
@@ -200,12 +201,12 @@ export default function Auth() {
             </label>
             </>}
             {error ? <p className="notice" role="alert">{error}</p> : null}
-            <button disabled={busy} className="btn btn-primary" type="submit">{busy ? <><span className="th-spinner" aria-hidden="true" /> Входим…</> : 'Войти'}</button>
-            <button disabled={busy} type="button" className="btn btn-ghost" onClick={fillDemoData}>Заполнить демо-данные</button>
+            <ActionButton disabled={busy} className="btn btn-primary" type="submit">{busy ? <><span className="th-spinner" aria-hidden="true" /> Входим…</> : 'Войти'}</ActionButton>
+            <ActionButton disabled={busy} type="button" className="btn btn-ghost" onClick={fillDemoData}>Заполнить демо-данные</ActionButton>
             {role === 'student' || role === 'parent' ? (
-              <button disabled={busy} type="button" className="btn btn-ghost" onClick={() => { setMode('register'); setError('') }}>Создать аккаунт</button>
+              <ActionButton disabled={busy} type="button" className="btn btn-ghost" onClick={() => { setMode('register'); setError('') }}>Создать аккаунт</ActionButton>
             ) : organizationRole ? <Link className="btn btn-ghost" to={`/organization-registration?role=${role}`}>Зарегистрироваться</Link> : null}
-          </form>
+          </ActionForm>
         )}
       </div>
     </main>

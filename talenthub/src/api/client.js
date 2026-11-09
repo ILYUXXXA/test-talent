@@ -37,6 +37,10 @@ export async function request(path, { body, auth = true, raw = false, signal, ..
     if (response.status === 401 && sentToken && token === sentToken) { setToken(null); unauthorized() }
     throw new ApiError(data.error?.message || 'Не удалось выполнить запрос.', response.status, data.error?.code || 'http_error')
   }
+  if (data?.demo_mode === true) {
+    if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('talenthub:demo-restriction'))
+    throw new ApiError('Это действие недоступно на демо-аккаунте', response.status, 'demo_restricted')
+  }
   return raw ? { data, status: response.status } : data
 }
 export function queryString(values = {}) {

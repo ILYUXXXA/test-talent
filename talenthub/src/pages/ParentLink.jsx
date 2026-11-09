@@ -1,3 +1,4 @@
+import { ActionButton } from '../components/ActionControls.jsx'
 import { useDialogFocus } from '../components/useDialogFocus.js'
 import CabinetNav from '../components/CabinetNav.jsx'
 import { useStoreRevision } from '../data/hooks.js'
@@ -143,7 +144,7 @@ function ParentBar({ section, onSection }) {
         <Link to="/" className="brand-lockup" aria-label="TalentHub — главная"><span className="brand-mark">t.</span><span className="brand-word">Talent<span>Hub</span></span></Link>
         <CabinetNav activeKey={section} className="nav student-tabs org-shell-tabs" aria-label="Разделы родительского кабинета">
           {PARENT_TABS.map((tab) => (
-            <button
+            <ActionButton
               key={tab.id}
               type="button"
               className={section === tab.id ? 'active' : undefined}
@@ -152,7 +153,7 @@ function ParentBar({ section, onSection }) {
             >
               {tab.icon}
               {tab.label}
-            </button>
+            </ActionButton>
           ))}
         </CabinetNav>
       </div>
@@ -185,7 +186,7 @@ export default function ParentLink() {
     setSelectingChild(childId)
     try {
       await selectChild(childId)
-    } catch (error) { setLinkNote(error.message) }
+    } catch (error) { if (error.code === 'demo_restricted') return; setLinkNote(error.message) }
     finally { setSelectingChild(null) }
   }
 
@@ -209,7 +210,7 @@ export default function ParentLink() {
         already: result.already,
         message: result.already ? 'Это мероприятие уже предложено.' : 'Мероприятие предложено ребёнку.',
       }
-    } catch (error) {
+    } catch (error) { if (error.code === 'demo_restricted') return;
       return { ok: false, message: error.message || 'Не удалось предложить мероприятие.' }
     } finally {
       setSuggestingEvent(null)
@@ -298,7 +299,7 @@ export default function ParentLink() {
           </div>
           <div className="parent-child-switcher" aria-label="Выбор ребёнка">
             {cabinet.children.map((child) => (
-              <button
+              <ActionButton
                 key={child.id}
                 type="button"
                 className={child.id === active?.id ? 'parent-child-pill active' : 'parent-child-pill'}
@@ -310,7 +311,7 @@ export default function ParentLink() {
                 <span className="parent-child-avatar">{personName(child).split(' ').map((part) => part[0]).slice(0, 2).join('')}</span>
                 <span>{personName(child)}</span>
                 {selectingChild === child.id ? <span className="spinner spinner-small" aria-label="Загрузка" /> : child.id === active?.id ? <span className="parent-child-check">✓</span> : null}
-              </button>
+              </ActionButton>
             ))}
 
           </div>
@@ -377,6 +378,7 @@ export default function ParentLink() {
                       ? { eventId: '', title: item, status: 'подана' }
                       : { eventId: item.eventId || '', title: item.title || '', status: item.status || 'подана' }
                   ))}
+                  suggestedEventIds={(cabinet.suggestions || []).filter(item => item.childId === active.id).map(item => item.eventId)}
                   actionLabel="Предложить ребёнку"
                   onAction={onSuggestEvent}
                   pendingActionId={suggestingEvent}
@@ -394,7 +396,7 @@ export default function ParentLink() {
                           <div className="row">
                             <span className="badge badge-muted">{selectedSchool.type}</span>
                             <span className="badge">{selectedSchool.region}</span>
-                            {selectedSchool.id !== childSchool?.id ? <button type="button" className="btn btn-ghost btn-small" onClick={() => setSelectedSchoolId(childSchool?.id || null)}>Вернуться к школе ребёнка</button> : null}
+                            {selectedSchool.id !== childSchool?.id ? <ActionButton type="button" className="btn btn-ghost btn-small" onClick={() => setSelectedSchoolId(childSchool?.id || null)}>Вернуться к школе ребёнка</ActionButton> : null}
                           </div>
                         ) : null}
                       </header>
@@ -505,7 +507,7 @@ export default function ParentLink() {
                     <ol className="school-rank">
                       {ranking.ranked.map(({ school, fact }, index) => (
                         <li key={school.id} className={`${school.id === childSchool?.id ? 'mine ' : ''}${school.id === selectedSchool?.id ? 'selected' : ''}`}>
-                          <button type="button" className="school-rank-select" onClick={() => setSelectedSchoolId(school.id)} aria-pressed={school.id === selectedSchool?.id}>
+                          <ActionButton type="button" className="school-rank-select" onClick={() => setSelectedSchoolId(school.id)} aria-pressed={school.id === selectedSchool?.id}>
                             <span className="school-place">{index + 1}</span>
                             <span className="school-rank-copy">
                               <span className="spread"><span className="school-rank-name">{school.name}</span>{school.id === childSchool?.id ? <span className="badge badge-ok">школа ребёнка</span> : null}</span>
@@ -514,7 +516,7 @@ export default function ParentLink() {
                               <span className="muted">{fact.confirmation}</span>
                               <span className="school-open-hint">Открыть карточку школы →</span>
                             </span>
-                          </button>
+                          </ActionButton>
                         </li>
                       ))}
                     </ol>
@@ -525,11 +527,11 @@ export default function ParentLink() {
                         <ul className="school-missing">
                           {ranking.unknown.map((school) => (
                             <li key={school.id} className={school.id === selectedSchool?.id ? 'selected' : undefined}>
-                              <button type="button" className="school-missing-select" onClick={() => setSelectedSchoolId(school.id)} aria-pressed={school.id === selectedSchool?.id}>
+                              <ActionButton type="button" className="school-missing-select" onClick={() => setSelectedSchoolId(school.id)} aria-pressed={school.id === selectedSchool?.id}>
                                 <span className="school-rank-name">{school.name}</span>
                                 <span className="muted">{school.type} · {school.region}</span>
                                 <span className="school-open-hint">Открыть карточку школы →</span>
-                              </button>
+                              </ActionButton>
                             </li>
                           ))}
                         </ul>
@@ -556,7 +558,7 @@ export default function ParentLink() {
           >
             <div className="spread">
               <span className="badge badge-muted">{progressOpen.kind}</span>
-              <button type="button" className="btn btn-ghost btn-small" onClick={() => setProgressOpen(null)}>Закрыть</button>
+              <ActionButton type="button" className="btn btn-ghost btn-small" onClick={() => setProgressOpen(null)}>Закрыть</ActionButton>
             </div>
             <h2 id="progress-detail-title">{progressOpen.title}</h2>
             {visibleStatus(progressOpen.item) ? (
@@ -616,7 +618,7 @@ function ProgressCard({ title, items, empty, onOpen }) {
         const status = visibleStatus(item)
         const label = entryTitle(item) || '—'
         return (
-          <button
+          <ActionButton
             key={`${label}-${index}`}
             type="button"
             className="card event-card"
@@ -624,7 +626,7 @@ function ProgressCard({ title, items, empty, onOpen }) {
           >
             <span className="card-title">{label}</span>
             {status ? <span className={statusClass(status)}>{statusLabel(status)}</span> : null}
-          </button>
+          </ActionButton>
         )
       })}
     </section>

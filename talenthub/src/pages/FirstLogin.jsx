@@ -1,3 +1,4 @@
+import { ActionButton, ActionForm } from '../components/ActionControls.jsx'
 import { useState } from 'react';
 import { pendingInvitationPath } from '../data/family-invitation.js';
 import { useNavigate } from 'react-router-dom';
@@ -75,7 +76,7 @@ export default function FirstLogin() {
         city: cityItem == null ? city : storedValue(cityItem),
         interests: picked,
       });
-    } catch (error) {
+    } catch (error) { if (error.code === 'demo_restricted') return;
       setError(error.message || 'Не удалось сохранить профиль.');
       return;
     }
@@ -102,7 +103,7 @@ export default function FirstLogin() {
               ))}
             </div>
           </div>
-          <form className="modal-card" onSubmit={onSubmit}>
+          <ActionForm className="modal-card" onSubmit={onSubmit}>
             <h1 className="title">Заполните профиль</h1>
             <p className="lead">
               Класс, город и интересы нужны, чтобы показать подходящие мероприятия. Список событий сзади приглушён.
@@ -132,22 +133,22 @@ export default function FirstLogin() {
                   const value = valueOf(item);
                   const active = selected.includes(value);
                   return (
-                    <button
+                    <ActionButton
                       key={value}
                       type="button"
                       className={active ? 'chip active' : 'chip'}
                       onClick={() => toggle(value)}
                     >
                       {labelOf(item)}
-                    </button>
+                    </ActionButton>
                   );
                 })}
               </div>
             </div>
             {error ? <p className="notice">{error}</p> : null}
-            <button className="btn btn-primary" type="submit">Показать мероприятия</button>
+            <ActionButton className="btn btn-primary" type="submit">Показать мероприятия</ActionButton>
             
-          </form>
+          </ActionForm>
         </div>
       </div>
     </main>

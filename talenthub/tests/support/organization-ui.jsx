@@ -1,0 +1,6 @@
+export { default as School } from '../../src/pages/SchoolCabinet.jsx'
+export { default as Company } from '../../src/pages/Company.jsx'
+export { default as Feedback } from '../../src/components/DemoRestrictionDialog.jsx'
+export { getState, logout } from '../../src/data/store.js'
+export { setToken } from '../../src/api/client.js'
+export { partnershipViews } from '../../src/data/normalizers.js'

@@ -22,11 +22,6 @@ export const subscribe = listener => { listeners.add(listener); return () => lis
 export const getRevision = () => revision
 export const getState = () => state
 export const currentUser = () => state.user
-const DEMO_ORG_TOKENS = new Set(['th_demo_school_1f85ed08247f646e3309082eee04b85f885a4db17382d06fc82ebf95dee030f','th_demo_company_71a1140475560d032a232e3fb660700021e5d7106ad006026366d71e6e2adcd3'])
-const DEMO_ORG_KEY = 'talenthub_demo_organization'
-export const isDemoOrganization = () => {
-  return DEMO_ORG_TOKENS.has(String(getToken() || '').trim()) || globalThis.sessionStorage?.getItem(DEMO_ORG_KEY) === '1'
-}
 export const listSchools = () => state.organizations.filter(o => o.kind === 'school').map(o => o.name)
 export const listEvents = () => state.events
 export const listUpcoming = () => state.upcoming
@@ -43,13 +38,13 @@ export const parentCabinet = () => ({ ready: state.ready, error: state.error, lo
   user: state.user, children: state.children, activeId: state.activeId,
   suggestions: state.suggestions, events: state.events, schools: state.schools })
 function clearSession() {
-  epoch += 1; refreshPromise = null; globalThis.sessionStorage?.removeItem(DEMO_ORG_KEY); setToken(null)
+  epoch += 1; refreshPromise = null; setToken(null)
   state = { ...empty(), ready: true, organizations: state.organizations, reference: state.reference,
     catalog: state.catalog.map(e => ({ ...e, my_registration: null })), events: state.catalog.map(e => ({ ...e, my_registration: null })), upcoming: state.upcoming }
   emit()
 }
 onUnauthorized(clearSession)
-export const logout = () => { globalThis.sessionStorage?.removeItem(DEMO_ORG_KEY); clearSession() }
+export const logout = () => { clearSession() }
 
 async function publicData() {
   const [reference, organizations, catalog, upcoming] = await Promise.all([
@@ -150,12 +145,7 @@ async function authenticateOnce(path, body) {
   return state.user
 }
 export const login = (email, password, expectedRole) => authenticate('/auth/login', { email, password, ...(expectedRole ? { expected_role: expectedRole } : {}) })
-export const loginOrganization = async (token, expectedRole) => {
-  const result = await authenticate('/auth/organization-login', { token, expected_role: expectedRole })
-  if (DEMO_ORG_TOKENS.has(String(token || '').trim())) globalThis.sessionStorage?.setItem(DEMO_ORG_KEY, '1')
-  else globalThis.sessionStorage?.removeItem(DEMO_ORG_KEY)
-  return result
-}
+export const loginOrganization = (token, expectedRole) => authenticate('/auth/organization-login', { token, expected_role: expectedRole })
 export const registerStudent = data => authenticate('/auth/register', { role: data.role || 'student',
   first_name: data.firstName, last_name: data.lastName, email: data.email, password: data.password,
   ...(data.role === 'parent' ? {} : { birth_date: data.birthDate, school_id: organizationId(data.school, 'school') }) })
@@ -165,11 +155,7 @@ function organizationId(value, kind) {
   if (matches.length !== 1) throw new ApiError('Выберите организацию из справочника.', 422, 'invalid_organization')
   return matches[0].id
 }
-async function mutate(key, callback) {
-  if (['school', 'company'].includes(state.user?.role) && isDemoOrganization()) {
-    if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('talenthub:demo-restriction', { detail: { role: state.user.role } }))
-    throw new ApiError('Это действие недоступно в демо-аккаунте. Зарегистрируйте организацию.', 403, 'demo_restricted')
-  }
+async function mutate(key, callback, success = true) {
   if (pendingMutations.has(key)) return pendingMutations.get(key)
   const ownEpoch = epoch
   const promise = (async () => {
@@ -177,7 +163,7 @@ async function mutate(key, callback) {
     if (epoch === ownEpoch) {
       await refresh()
     }
-    if (['school', 'company', 'student', 'parent'].includes(state.user?.role) && typeof window !== 'undefined') {
+    if (success && epoch === ownEpoch && typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('talenthub:action-success', { detail: { message: 'Действие успешно выполнено. Изменения сохранены.' } }))
     }
     return result
@@ -229,17 +215,17 @@ export const respondPartnership = (id, decision) => mutate(`partnership-decision
 export const getFamilyInvitation = () => request('/parents/me/invitation')
 export const createFamilyInvitation = () => request('/parents/me/invitation', { method: 'POST' })
 export const deleteFamilyInvitation = () => request('/parents/me/invitation', { method: 'DELETE' })
-export const acceptFamilyInvitation = token => mutate(`family:${token}`, () => request('/family-invitations/accept', { method: 'POST', body: { token } }))
+export const acceptFamilyInvitation = token => mutate(`family:${token}`, () => request('/family-invitations/accept', { method: 'POST', body: { token } }), false)
 export const listOrganizationAccounts = () => request('/moderation/organization-accounts')
-export const createOrganizationAccount = body => mutate('organization-account', () => request('/moderation/organization-accounts', { method: 'POST', body }))
+export const createOrganizationAccount = body => mutate('organization-account', () => request('/moderation/organization-accounts', { method: 'POST', body }), false)
 export const rotateOrganizationToken = id => request(`/moderation/organization-accounts/${id}/token`, { method: 'POST' })
-export const selectChild = id => mutate('children', async () => { await request(`/parents/me/children/${id}/select`, { method: 'PUT' }); return { ok: true } })
+export const selectChild = id => mutate('children', async () => { await request(`/parents/me/children/${id}/select`, { method: 'PUT' }); return { ok: true } }, false)
 export const suggestToChild = ({ childId, eventId }) => mutate(`suggestion:${childId}:${eventId}`, async () => {
   const already = state.suggestions.some(s => s.childId === childId && s.eventId === eventId)
   await request(`/parents/me/children/${childId}/suggestions`, { method: 'POST', body: { event_id: eventId } })
   return { ok: true, already }
 })
-export const markNotificationRead = id => mutate(`notification:${id}`, () => request(`/notifications/${id}/read`, { method: 'PUT' }))
+export const markNotificationRead = id => mutate(`notification:${id}`, () => request(`/notifications/${id}/read`, { method: 'PUT' }), false)
 export const moderate = (kind, id, status) => mutate(`moderation:${kind}:${id}`, () => request(`/moderation/${kind === 'partnerships' ? 'partnership-requests' : kind}/${id}/decision`,
   { method: 'POST', body: { decision: status === 'rejected' ? 'reject' : 'approve' } }))
 export async function fetchCatalog(filters, signal) {

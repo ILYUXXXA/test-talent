@@ -2795,3 +2795,10 @@ grid-template-columns: 1fr 1fr;
   .auth-page { padding: 20px 0 32px; }
   .auth-container .card { padding: 18px; }
 }
+
+/* Prefer whole words; only split a token when it exceeds the available line. */
+body {
+  hyphens: none;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
