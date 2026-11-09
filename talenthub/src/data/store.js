@@ -177,7 +177,7 @@ async function mutate(key, callback) {
     if (epoch === ownEpoch) {
       await refresh()
     }
-    if (['school', 'company'].includes(state.user?.role) && typeof window !== 'undefined') {
+    if (['school', 'company', 'student', 'parent'].includes(state.user?.role) && typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('talenthub:action-success', { detail: { message: 'Действие успешно выполнено. Изменения сохранены.' } }))
     }
     return result
