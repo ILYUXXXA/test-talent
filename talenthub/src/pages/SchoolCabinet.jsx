@@ -45,6 +45,7 @@ export default function SchoolCabinet() {
   }
   function setNotice(message) {
     if (!message) { setRawNotice(''); return }
+    if (isDemoOrganization()) { showDemoRestriction(); return }
     if (typeof message === 'string' && /демо|зарегистрируйте организацию|demo_restricted/i.test(message)) {
       showDemoRestriction()
       return
