@@ -185,7 +185,6 @@ export default function ParentLink() {
     setSelectingChild(childId)
     try {
       await selectChild(childId)
-      window.dispatchEvent(new CustomEvent('talenthub:action-success', { detail: { message: 'Профиль ребёнка выбран.' } }))
     } catch (error) { setLinkNote(error.message) }
     finally { setSelectingChild(null) }
   }
@@ -205,7 +204,6 @@ export default function ParentLink() {
     try {
       const result = await suggestToChild({ childId: active.id, eventId: event.id })
       if (!result || result.ok !== true) return { ok: false, message: 'Не удалось предложить мероприятие.' }
-      if (!result.already) window.dispatchEvent(new CustomEvent('talenthub:action-success', { detail: { message: 'Мероприятие успешно предложено ребёнку.' } }))
       return {
         ok: true,
         already: result.already,
