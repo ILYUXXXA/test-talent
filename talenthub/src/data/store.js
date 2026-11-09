@@ -25,7 +25,7 @@ export const currentUser = () => state.user
 const DEMO_ORG_TOKENS = new Set(['th_demo_school_1f85ed08247f646e3309082eee04b85f885a4db17382d06fc82ebf95dee030f','th_demo_company_71a1140475560d032a232e3fb660700021e5d7106ad006026366d71e6e2adcd3'])
 const DEMO_ORG_KEY = 'talenthub_demo_organization'
 export const isDemoOrganization = () => {
-  return DEMO_ORG_TOKENS.has(getToken()) || globalThis.sessionStorage?.getItem(DEMO_ORG_KEY) === '1'
+  return DEMO_ORG_TOKENS.has(String(getToken() || '').trim()) || globalThis.sessionStorage?.getItem(DEMO_ORG_KEY) === '1'
 }
 export const listSchools = () => state.organizations.filter(o => o.kind === 'school').map(o => o.name)
 export const listEvents = () => state.events
@@ -152,7 +152,7 @@ async function authenticateOnce(path, body) {
 export const login = (email, password, expectedRole) => authenticate('/auth/login', { email, password, ...(expectedRole ? { expected_role: expectedRole } : {}) })
 export const loginOrganization = async (token, expectedRole) => {
   const result = await authenticate('/auth/organization-login', { token, expected_role: expectedRole })
-  if (DEMO_ORG_TOKENS.has(token)) globalThis.sessionStorage?.setItem(DEMO_ORG_KEY, '1')
+  if (DEMO_ORG_TOKENS.has(String(token || '').trim())) globalThis.sessionStorage?.setItem(DEMO_ORG_KEY, '1')
   else globalThis.sessionStorage?.removeItem(DEMO_ORG_KEY)
   return result
 }
