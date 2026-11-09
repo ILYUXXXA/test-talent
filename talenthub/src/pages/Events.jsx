@@ -139,8 +139,7 @@ export default function Events() {
       return
     }
     refresh()
-    if (!result.already) setStatus(result.status || 'подана')
-    setMessage(result.already ? `Заявка уже есть: ${result.status}.` : 'Заявка подана. Список переключён на этот статус.')
+    setMessage(result.already ? `Заявка уже есть: ${result.status}.` : 'Заявка подана. Остальные мероприятия не изменены.')
   }
 
   function RegisterButton({ event }) {
