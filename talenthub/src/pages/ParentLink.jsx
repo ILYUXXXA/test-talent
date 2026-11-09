@@ -382,6 +382,7 @@ export default function ParentLink() {
                   actionLabel="Предложить ребёнку"
                   onAction={onSuggestEvent}
                   pendingActionId={suggestingEvent}
+                  openAfterAction={false}
                 />
               ) : null}
 
