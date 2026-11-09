@@ -22,7 +22,13 @@ export default function Company() {
   const [notice, setNoticeState] = useState('')
   function showDemoRestriction() { window.dispatchEvent(new CustomEvent('talenthub:demo-restriction', { detail: { role: 'company' } })) }
   function setNotice(message) {
-    if (demoAccount && typeof message === 'string' && /демо|зарегистрируйте организацию|demo_restricted/i.test(message)) { showDemoRestriction(); return }
+    if (!message) { setNoticeState(''); return }
+    if (isDemoOrganization() && typeof message === 'string' && /демо|зарегистрируйте организацию|demo_restricted/i.test(message)) { showDemoRestriction(); return }
+    if (typeof message === 'string' && !/не удалось|ошиб|error|не получилось|попробуйте ещё раз/i.test(message)) {
+      setNoticeState('')
+      window.dispatchEvent(new CustomEvent('talenthub:action-success', { detail: { message } }))
+      return
+    }
     setNoticeState(message)
   }
   useEffect(() => {
