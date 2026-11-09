@@ -77,6 +77,7 @@ export default function EventFeed({
   className,
   onAction,
   onAuthRequired,
+  openAfterAction = true,
 }) {
   const [directions, setDirections] = useState([])
   const [category, setCategory] = useState('all')
@@ -137,7 +138,7 @@ export default function EventFeed({
     }
     if (result.status) setStatus(result.status)
     setMessage(result.message || '')
-    setOpen(event)
+    if (openAfterAction) setOpen(event)
   }
 
   function EventActionButton({ event }) {
