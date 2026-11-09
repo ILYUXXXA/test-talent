@@ -141,7 +141,6 @@ export default function Events() {
     refresh()
     if (!result.already) setStatus(result.status || 'подана')
     setMessage(result.already ? `Заявка уже есть: ${result.status}.` : 'Заявка подана. Список переключён на этот статус.')
-    setOpen(event)
   }
 
   function RegisterButton({ event }) {
