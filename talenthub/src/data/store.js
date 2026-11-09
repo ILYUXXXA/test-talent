@@ -177,6 +177,9 @@ async function mutate(key, callback) {
     if (epoch === ownEpoch) {
       await refresh()
     }
+    if (['school', 'company'].includes(state.user?.role) && typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('talenthub:action-success', { detail: { message: 'Действие успешно выполнено. Изменения сохранены.' } }))
+    }
     return result
   })().finally(() => pendingMutations.delete(key))
   pendingMutations.set(key, promise)
