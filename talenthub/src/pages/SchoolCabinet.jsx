@@ -44,8 +44,14 @@ export default function SchoolCabinet() {
     window.dispatchEvent(new CustomEvent('talenthub:demo-restriction', { detail: { role: 'school' } }))
   }
   function setNotice(message) {
+    if (!message) { setRawNotice(''); return }
     if (typeof message === 'string' && /демо|зарегистрируйте организацию|demo_restricted/i.test(message)) {
       showDemoRestriction()
+      return
+    }
+    if (typeof message === 'string' && !/не удалось|ошиб|error|не получилось|попробуйте ещё раз/i.test(message)) {
+      setRawNotice('')
+      window.dispatchEvent(new CustomEvent('talenthub:action-success', { detail: { message } }))
       return
     }
     setRawNotice(message)
